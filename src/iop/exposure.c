@@ -183,7 +183,7 @@ static void exposure_set_white(struct dt_iop_module_t *self, const float white)
   p->exposure = exposure;
   
   if(p->black >= white)
-    exposure_set_black(self, white - 0.01);
+    exposure_set_black(self, white);
 
   dt_iop_exposure_gui_data_t *g = (dt_iop_exposure_gui_data_t *)self->gui_data;
   ++darktable.gui->reset;
@@ -199,10 +199,10 @@ static void exposure_set_black(struct dt_iop_module_t *self, const float black)
   if(p->black == black)
     return;
 
-  p->black = black;
-  
   if(p->black >= exposure2white(p->exposure))
-    exposure_set_white(self, p->black + 0.01);
+    p->black = exposure2white(p->exposure);
+  else 
+    p->black = black;
 
   dt_iop_exposure_gui_data_t *g = (dt_iop_exposure_gui_data_t *)self->gui_data;
   ++darktable.gui->reset;
@@ -225,17 +225,11 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
   dt_iop_exposure_gui_data_t *g = (dt_iop_exposure_gui_data_t *)self->gui_data;
   dt_iop_exposure_params_t *p = (dt_iop_exposure_params_t *)self->params;
 
-  if(w == g->exposure)
+  if((w == g->exposure) || (w == g->black))
   {
     const float white = exposure2white(p->exposure);
     if(p->black >= white)
-      exposure_set_black(self, white - 0.01);
-  }
-  else if(w == g->black)
-  {
-    const float white = exposure2white(p->exposure);
-    if(p->black >= white)
-      exposure_set_white(self, p->black + 0.01);
+      exposure_set_black(self, white);
   }
 }
 
@@ -253,6 +247,7 @@ void gui_init(struct dt_iop_module_t *self)
   const float low_lim = dt_conf_get_float("exposure_lower_limit");
   const float up_lim = dt_conf_get_float("exposure_upper_limit");
   const float black_lim = dt_conf_get_float("exposure_black_limit");
+  const float black_lim_low = dt_conf_get_float("exposure_black_limit_low");
   
   g->exposure = dt_bauhaus_slider_from_params(self, N_("exposure"));
   gtk_widget_set_tooltip_text(g->exposure, _("adjust the exposure correction"));
@@ -263,8 +258,8 @@ void gui_init(struct dt_iop_module_t *self)
 
   g->black = dt_bauhaus_slider_from_params(self, "black");
   dt_bauhaus_slider_set_step(g->black, 0.0001);
-  dt_bauhaus_slider_set_digits(g->black, 4);
-  dt_bauhaus_slider_set_soft_range(g->black, -black_lim, black_lim);
+  dt_bauhaus_slider_set_digits(g->black, 3);
+  dt_bauhaus_slider_set_soft_range(g->black, black_lim_low, black_lim);
 }
 
 void gui_cleanup(struct dt_iop_module_t *self)

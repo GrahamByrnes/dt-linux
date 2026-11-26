@@ -1464,7 +1464,7 @@ void dt_colorspaces_set_display_profile(const dt_colorspaces_color_profile_type_
 #ifdef GDK_WINDOWING_X11
 
   // we will use the xatom no matter what configured when compiled without colord
-  gboolean use_xatom = TRUE;
+//  gboolean use_xatom = TRUE;
 #ifdef USE_COLORDGTK
   gboolean use_colord = TRUE;
   const char *display_profile_source = (profile_type == DT_COLORSPACE_DISPLAY2)
@@ -1480,6 +1480,8 @@ void dt_colorspaces_set_display_profile(const dt_colorspaces_color_profile_type_
 #endif
 
   /* let's have a look at the xatom, just in case ... */
+/*
+  
   if(use_xatom)
   {
     GtkWidget *widget = (profile_type == DT_COLORSPACE_DISPLAY2) ? darktable.develop->second_window.second_wnd
@@ -1507,6 +1509,8 @@ void dt_colorspaces_set_display_profile(const dt_colorspaces_color_profile_type_
                      64 * 1024 * 1024, FALSE, &type, &format, &buffer_size, &buffer);
     g_free(atom_name);
   }
+*/  
+  
 #ifdef USE_COLORDGTK
   /* also try to get the profile from colord. this will set the value asynchronously! */
   if(use_colord)

@@ -107,19 +107,11 @@ int default_colorspace(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_p
   return iop_cs_rgb;
 }
 
-static int dt_channel_changer()
-{
-  //int ret = 4;
-  //if(strcmp(dt_conf_get_string("darkroom/ui/gray_channels"), "experimental (1)") == 0)
-  //  ret = 1;
-  return 1;
-}
-
 const int which_channel(const dt_iop_channelmixer_params_t *p)
 {
   const gboolean do_gray = p->red[CHANNEL_GRAY]
                            || p->green[CHANNEL_GRAY] || p->blue[CHANNEL_GRAY];
-  return do_gray ? CHANNEL_GRAY : CHANNEL_RED;
+  return do_gray ? CHANNEL_GRAY : CHANNEL_OFFSET;
 }
 
 inline static void matrix3k(const float *in, float *out, const float *variable,
@@ -163,7 +155,7 @@ void process(struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const 
 {
   const dt_iop_channelmixer_data_t *data = (dt_iop_channelmixer_data_t *)piece->data;
   const size_t npixels = roi_out->width * roi_out->height;
-  const int ch_gray_out = dt_channel_changer();
+  const int ch_gray_out = 1;                                             
   const float *start_address = data->red;
   int gray_mix_mode = 0;
   
@@ -179,20 +171,21 @@ void process(struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const 
   else
   {
     piece->colors = 4;
-    run_process(start_address, CHANNEL_RED, 3, 3, 3, ivoid, ovoid, npixels);
+    run_process(start_address, CHANNEL_OFFSET, 3, 3, 3, ivoid, ovoid, npixels);
   }
 }
 
 static void setting_limits(dt_iop_module_t *self, const int color)
 {
-  if(darktable.gui->reset) return;
+  if(darktable.gui->reset)
+    return;
 
   dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)self->params;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
   const int output = dt_bauhaus_combobox_get(g->output_channel) + CHANNEL_OFFSET;
   const float low_lim = dt_conf_get_float("channel_mixer_lower_limit");
   const float up_lim = dt_conf_get_float("channel_mixer_upper_limit");
-  const float offset=fmaxf(0.1f, -2.0f * low_lim);
+  const float offset=fmaxf(0.0f, -2.0f * low_lim);
   
   float chan[] = { p->red[output], p->green[output], p->blue[output] };
   float delta[3] = { 0 };
@@ -207,17 +200,21 @@ static void setting_limits(dt_iop_module_t *self, const int color)
     chan[i] = CLAMP(chan[i], low_lim, up_lim) + offset;
     sum_p += chan[i];
   }
+  
+  /*******/
+  sum_p = 1.0f/sum_p;
 
   for(int i = 0; i < 3; i++)
   {
-    chan[i] *= (1.0f + 3.0f * offset) / sum_p;
-    chan[i] -= offset;
+    chan[i] *= sum_p; 
+    //chan[i] *= (1.0f + 3.0f * offset) / sum_p;
+    //chan[i] -= (3.0f * offset) * sum_p;
   }
 
   p->red[output] = chan[0];
   p->green[output] = chan[1];
   p->blue[output] = chan[2];
-  
+
   ++darktable.gui->reset;
   dt_bauhaus_slider_set(g->scale_red, chan[0]);
   dt_bauhaus_slider_set(g->scale_green, chan[1]);
@@ -228,7 +225,10 @@ static void setting_limits(dt_iop_module_t *self, const int color)
 static void red_callback(GtkWidget *slider, gpointer user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
-  if(darktable.gui->reset) return;
+  
+  if(darktable.gui->reset)
+    return;
+
   dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)self->params;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
   const int output_channel_index = dt_bauhaus_combobox_get(g->output_channel) + CHANNEL_OFFSET;
@@ -241,13 +241,16 @@ static void red_callback(GtkWidget *slider, gpointer user_data)
     else
       p->red[output_channel_index] = dt_bauhaus_slider_get(slider);
   }
+  
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
 
 static void green_callback(GtkWidget *slider, gpointer user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
-  if(darktable.gui->reset) return;
+  
+  if(darktable.gui->reset) 
+    return;
   
   dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)self->params;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
@@ -261,6 +264,7 @@ static void green_callback(GtkWidget *slider, gpointer user_data)
     else
       p->green[output_channel_index] = dt_bauhaus_slider_get(slider);
   }
+  
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
 
@@ -268,7 +272,10 @@ static void green_callback(GtkWidget *slider, gpointer user_data)
 static void blue_callback(GtkWidget *slider, gpointer user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
-  if(darktable.gui->reset) return;
+  
+  if(darktable.gui->reset)
+    return;
+
   dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)self->params;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
   const int output_channel_index = dt_bauhaus_combobox_get(g->output_channel) + CHANNEL_OFFSET;
@@ -281,13 +288,16 @@ static void blue_callback(GtkWidget *slider, gpointer user_data)
     else
       p->blue[output_channel_index] = dt_bauhaus_slider_get(slider);
   }
+
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
 
 static void output_callback(GtkComboBox *combo, gpointer user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
-  if(darktable.gui->reset) return;
+  
+  if(darktable.gui->reset)
+    return;
   
   const dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)self->params;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
@@ -296,8 +306,8 @@ static void output_callback(GtkComboBox *combo, gpointer user_data)
   dt_bauhaus_slider_set(g->scale_red, p->red[output_channel_index]);
   dt_bauhaus_slider_set(g->scale_green, p->green[output_channel_index]);
   dt_bauhaus_slider_set(g->scale_blue, p->blue[output_channel_index]);
-  dt_bauhaus_combobox_set(g->normalise, output_channel_index >= CHANNEL_RED);
-  gtk_widget_set_visible(g->normalise, output_channel_index >= CHANNEL_RED);
+  dt_bauhaus_combobox_set(g->normalise, output_channel_index >= CHANNEL_OFFSET);
+  gtk_widget_set_visible(g->normalise, output_channel_index >= CHANNEL_OFFSET);
 }
 
 void commit_params(struct dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
@@ -331,10 +341,10 @@ void gui_update(struct dt_iop_module_t *self)
   dt_iop_module_t *module = (dt_iop_module_t *)self;
   dt_iop_channelmixer_gui_data_t *g = (dt_iop_channelmixer_gui_data_t *)self->gui_data;
   const dt_iop_channelmixer_params_t *p = (dt_iop_channelmixer_params_t *)module->params;
-
   const int use_channel = which_channel(p);
+  
   dt_bauhaus_combobox_set(g->output_channel, use_channel);
-  dt_bauhaus_combobox_set(g->normalise, use_channel >= CHANNEL_RED);
+  dt_bauhaus_combobox_set(g->normalise, use_channel >= CHANNEL_OFFSET);
   dt_bauhaus_slider_set(g->scale_red, p->red[use_channel]);
   dt_bauhaus_slider_set(g->scale_green, p->green[use_channel]);
   dt_bauhaus_slider_set(g->scale_blue, p->blue[use_channel]);
@@ -378,8 +388,8 @@ void gui_init(struct dt_iop_module_t *self)
   dt_bauhaus_widget_set_label(g->normalise, NULL, _("normalise"));
   dt_bauhaus_combobox_add(g->normalise, _("no"));
   dt_bauhaus_combobox_add(g->normalise, _("yes"));
-  dt_bauhaus_combobox_set(g->normalise, use_channel >= CHANNEL_RED);
-  gtk_widget_set_visible(g->normalise, use_channel >= CHANNEL_RED);
+  dt_bauhaus_combobox_set(g->normalise, use_channel >= CHANNEL_OFFSET);
+  gtk_widget_set_visible(g->normalise, use_channel >= CHANNEL_OFFSET);
   gtk_widget_set_tooltip_text(g->normalise, _("inputs sum to one"));
   
   const float low_lim = dt_conf_get_float("channel_mixer_lower_limit");

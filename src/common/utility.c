@@ -15,12 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*G_BEGIN_DECLS*/
 
 #include "common/darktable.h"
 #include "common/file_location.h"
 #include "common/grealpath.h"
 #include "common/utility.h"
 #include "gui/gtk.h"
+//#include "common/exif.cc"
 
 /* getpwnam_r availability check */
 #if defined __APPLE__ || defined _POSIX_C_SOURCE >= 1 || defined _XOPEN_SOURCE || defined _BSD_SOURCE        \
@@ -624,6 +626,8 @@ char *dt_read_file(const char *const filename, size_t *filesize)
   free(content);
   return NULL;
 }
+
+/*G_END_DECLS*/
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

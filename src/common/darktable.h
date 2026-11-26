@@ -57,7 +57,6 @@
 #include <glib/gi18n.h>
 #include <inttypes.h>
 #include <json-glib/json-glib.h>
-#include <lua/lua.h>
 #include <math.h>
 #include <sqlite3.h>
 #include <stdio.h>
@@ -220,6 +219,8 @@ struct dt_undo_t;
 struct dt_colorspaces_t;
 struct dt_l10n_t;
 
+G_BEGIN_DECLS
+
 typedef enum dt_debug_thread_t
 {
   // powers of two, masking
@@ -294,6 +295,7 @@ typedef struct darktable_t
   dt_pthread_mutex_t capabilities_threadsafe;
   dt_pthread_mutex_t exiv2_threadsafe;
   dt_pthread_mutex_t readFile_mutex;
+  dt_pthread_mutex_t metadata_threadsafe;
   char *progname;
   char *datadir;
   char *plugindir;
@@ -301,7 +303,6 @@ typedef struct darktable_t
   char *tmpdir;
   char *configdir;
   char *cachedir;
-  dt_lua_state_t lua_state;
   GList *guides;
   double start_wtime;
   GList *themes;
@@ -317,7 +318,7 @@ typedef struct
 
 extern darktable_t darktable;
 
-int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load_data, lua_State *L);
+int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load_data);
 void dt_cleanup();
 void dt_print(dt_debug_thread_t thread, const char *msg, ...) __attribute__((format(printf, 2, 3)));
 void dt_gettime_t(char *datetime, size_t datetime_len, time_t t);
@@ -776,6 +777,8 @@ static inline void dt_unreachable_codepath_with_caller(const char *description, 
  *          created with previous DT_MAX_PATH_FOR_PARAMS.
  */
 #define DT_MAX_PATH_FOR_PARAMS 4096
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

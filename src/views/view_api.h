@@ -60,9 +60,10 @@ int key_released(struct dt_view_t *self, guint key, guint state);
 void configure(struct dt_view_t *self, int width, int height);
 void scrolled(struct dt_view_t *self, double x, double y, int up, int state); // mouse scrolled in view
 void scrollbar_changed(struct dt_view_t *self, double x, double y); // scrollbars changed in view
-
 // list of mouse actions
 GSList *mouse_actions(const struct dt_view_t *self);
+GSList *accel_closures;
+struct dt_accel_dynamic_t *dynamic_accel_current;
 
 #pragma GCC visibility pop
 

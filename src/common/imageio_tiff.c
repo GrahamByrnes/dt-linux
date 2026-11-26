@@ -53,12 +53,10 @@ typedef union fp32_t
 
 static inline float _half_to_float(uint16_t h)
 {
-  /* see https://en.wikipedia.org/wiki/Half-precision_floating-point_format#Exponent_encoding
-     and https://en.wikipedia.org/wiki/Single-precision_floating-point_format#Exponent_encoding */
+  // see https://en.wikipedia.org/wiki/Half-precision_floating-point_format#Exponent_encoding
+  //   and https://en.wikipedia.org/wiki/Single-precision_floating-point_format#Exponent_encoding
 
-  /* TODO: use intrinsics when possible */
-
-  /* from https://gist.github.com/rygorous/2156668 */
+  // from https://gist.github.com/rygorous/2156668
   static const fp32_t magic = { 113 << 23 };
   static const uint32_t shifted_exp = 0x7c00 << 13; // exponent mask after shift
   fp32_t o;
@@ -150,7 +148,7 @@ static inline int _read_planar_h(tiff_t *t)
     uint16_t *in = ((uint16_t *)t->buf);
     float *out = ((float *)t->mipbuf) + (size_t)4 * row * t->width;
 
-    /* read scanline */
+    // read scanline 
     if(TIFFReadScanline(t->tiff, in, row, 0) == -1) return -1;
 
     for(uint32_t i = 0; i < t->width; i++, in += t->spp, out += 4)
@@ -201,6 +199,7 @@ static inline int _read_planar_f(tiff_t *t)
       out[3] = 0;
     }
   }
+  fprintf(stderr, "[common/imageio_tiff] _read_planar_f(32 bit)\n");/********/
 
   return 1;
 }
@@ -234,12 +233,12 @@ static inline int _read_planar_8_Lab(tiff_t *t, uint16_t photometric)
         out[1] = ((float)(in[1])) - 128.0f;
         out[2] = ((float)(in[2])) - 128.0f;
       }
-
       out[3] = 0;
     }
 
     cmsDoTransform(xform, output, output, t->width);
   }
+  fprintf(stderr, "[common/imageio_tiff] _read_planar_8_Lab photometric = %d, cielab = %d\n", photometric, PHOTOMETRIC_CIELAB);/********/
 
   cmsDeleteTransform(xform);
 
@@ -287,6 +286,7 @@ static inline int _read_planar_16_Lab(tiff_t *t, uint16_t photometric)
     cmsDoTransform(xform, output, output, t->width);
   }
 
+  fprintf(stderr, "[common/imageio_tiff] _read_planar_16_Lab photometric = %d, cielab = %d\n", photometric, PHOTOMETRIC_CIELAB);/********/
   cmsDeleteTransform(xform);
 
   return 1;
@@ -341,6 +341,7 @@ dt_imageio_retval_t dt_imageio_open_tiff(dt_image_t *img, const char *filename, 
 #else
   t.tiff = TIFFOpen(filename, "rb");
 #endif
+  fprintf(stderr, "[common/imageio_tiff] dt_imageio_open_tiff reading filename = %s \n", filename); /*************/
 
   if(t.tiff == NULL) return DT_IMAGEIO_FILE_CORRUPTED;
 
@@ -356,7 +357,9 @@ dt_imageio_retval_t dt_imageio_open_tiff(dt_image_t *img, const char *filename, 
 
   t.scanlinesize = TIFFScanlineSize(t.tiff);
 
-  dt_print(DT_DEBUG_CAMERA_SUPPORT, "[tiff_open] %dx%d %dbpp, %d samples per pixel.\n", t.width, t.height, t.bpp, t.spp);
+  dt_print(DT_DEBUG_CAMERA_SUPPORT, "[common/imageio_tiff] %dx%d %dbpp, %d samples per pixel.\n", t.width, t.height, t.bpp, t.spp);
+  fprintf(stderr, "[common/imageio_tiff] dt_imageio_open_tiff width = %d, height = %d, %d samples per pixel, %d spp, %d sampleformat.\n",
+                  t.width, t.height, t.bpp, t.spp, t.sampleformat);/********/
 
   // we only support 8/16 and 32 bits per pixel formats.
   if(t.bpp != 8 && t.bpp != 16 && t.bpp != 32)
@@ -383,7 +386,7 @@ dt_imageio_retval_t dt_imageio_open_tiff(dt_image_t *img, const char *filename, 
   t.mipbuf = (float *)dt_mipmap_cache_alloc(mbuf, t.image);
   if(!t.mipbuf)
   {
-    fprintf(stderr, "[tiff_open] error: could not alloc full buffer for image `%s'\n", t.image->filename);
+    fprintf(stderr, "[common/imageio_tiff] dt_imageio_open_tiff error: could not alloc full buffer for image `%s'\n", t.image->filename);
     TIFFClose(t.tiff);
     return DT_IMAGEIO_CACHE_FULL;
   }
@@ -391,7 +394,7 @@ dt_imageio_retval_t dt_imageio_open_tiff(dt_image_t *img, const char *filename, 
   /* don't depend on planar config if spp == 1 */
   if(t.spp > 1 && config != PLANARCONFIG_CONTIG)
   {
-    fprintf(stderr, "[tiff_open] error: planar config other than contig is not supported.\n");
+    fprintf(stderr, "[common/imageio_tiff] dt_imageio_open_tiff error: planar config other than contig is not supported.\n");
     TIFFClose(t.tiff);
     return DT_IMAGEIO_FILE_CORRUPTED;
   }
@@ -404,29 +407,40 @@ dt_imageio_retval_t dt_imageio_open_tiff(dt_image_t *img, const char *filename, 
 
   int ok = 1;
 
-  if((photometric == PHOTOMETRIC_CIELAB || photometric == PHOTOMETRIC_ICCLAB) && t.bpp == 8 && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
+  if((photometric == PHOTOMETRIC_CIELAB || photometric == PHOTOMETRIC_ICCLAB) && t.bpp == 8 
+      && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
   {
     ok = _read_planar_8_Lab(&t, photometric);
     t.image->buf_dsc.cst = iop_cs_Lab;
   }
-  else if((photometric == PHOTOMETRIC_CIELAB || photometric == PHOTOMETRIC_ICCLAB) && t.bpp == 16 && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
+  else if((photometric == PHOTOMETRIC_CIELAB || photometric == PHOTOMETRIC_ICCLAB) && t.bpp == 16
+           && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
   {
     ok = _read_planar_16_Lab(&t, photometric);
     t.image->buf_dsc.cst = iop_cs_Lab;
   }
   else if(t.bpp == 8 && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
+  {
     ok = _read_planar_8(&t);
+  }
   else if(t.bpp == 16 && t.sampleformat == SAMPLEFORMAT_UINT && config == PLANARCONFIG_CONTIG)
+  {
     ok = _read_planar_16(&t);
+  }
   else if(t.bpp == 16 && t.sampleformat == SAMPLEFORMAT_IEEEFP && config == PLANARCONFIG_CONTIG)
+  {
     ok = _read_planar_h(&t);
+  }
   else if(t.bpp == 32 && t.sampleformat == SAMPLEFORMAT_IEEEFP && config == PLANARCONFIG_CONTIG)
+  {
     ok = _read_planar_f(&t);
+  }
   else
   {
-    fprintf(stderr, "[tiff_open] error: Not a supported tiff image format.");
     ok = 0;
   }
+  
+  fprintf(stderr, "[common/imageio_tiff] dt_imageio_open_tiff bpp = %d, t.sampleformat = %d, SAMPLEFORMAT = %d\n", t.bpp, t.sampleformat, SAMPLEFORMAT_UINT);/********/
 
   _TIFFfree(t.buf);
   TIFFClose(t.tiff);
@@ -464,12 +478,14 @@ int dt_imageio_tiff_read_profile(const char *filename, uint8_t **out)
     {
       *out = (uint8_t *)malloc(profile_len);
       cmsSaveProfileToMem(profile, *out, &profile_len);
+      fprintf(stderr, "[common/imageio_tiff]in dt_imageio_tiff_read_profile, photometric clause profile_len = %d\n", profile_len);/********/
     }
   }
   else if(TIFFGetField(tiff, TIFFTAG_ICCPROFILE, &profile_len, &profile))
   {
     *out = (uint8_t *)malloc(profile_len);
     memcpy(*out, profile, profile_len);
+    fprintf(stderr, "[common/imageio_tiff]in dt_imageio_tiff_read_profile, TIFFGetField clause profile_len = %d\n", profile_len);/********/
   }
   else
     profile_len = 0;

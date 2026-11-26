@@ -13,7 +13,8 @@
 
 include(LibFindMacros)
 
-libfind_pkg_check_modules(Exiv2_PKGCONF exiv2)
+# Use pkg-config to get hints about paths
+libfind_pkg_check_modules(Exiv2_PKGCONF exiv2)                        
 
 find_path(Exiv2_INCLUDE_DIR
     NAMES
@@ -42,6 +43,7 @@ endif(WIN32)
 
 if(Exiv2_PKGCONF_VERSION VERSION_LESS Exiv2_FIND_VERSION)
   message(FATAL_ERROR "Exiv2 version check failed.  Version ${Exiv2_PKGCONF_VERSION} was found, at least version ${Exiv2_FIND_VERSION} is required")
+
 endif(Exiv2_PKGCONF_VERSION VERSION_LESS Exiv2_FIND_VERSION)
 
 include(FindPackageHandleStandardArgs)

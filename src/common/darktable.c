@@ -110,7 +110,7 @@ static int usage(const char *argv0)
   printf("  --cachedir <user cache directory>\n");
   printf("  --conf <key>=<value>\n");
   printf("  --configdir <user config directory>\n");
-  printf("  -d {all,cache,control,dev,fswatch,input,lighttable, lua\n");
+  printf("  -d {all,cache,control,dev,fswatch,input,lighttable\n");
   printf("      masks,memory,nan,perf,pwstorage,print,sql,ioporder,\n");
   printf("      imageio,undo,signal}\n");
   printf("  --d-signal <signal> \n");
@@ -320,7 +320,7 @@ static void dt_codepaths_init()
   //fprintf(stderr, "[dt_codepaths_init] will be using HIGHLY EXPERIMENTAL plain OpenMP SIMD codepath.\n");
 }
 
-int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load_data, lua_State *L)
+int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load_data)
 {
   double start_wtime = dt_get_wtime();
 
@@ -498,10 +498,6 @@ int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load
                darktable_package_string,
                darktable_last_commit_year,
                CHAR_BIT * sizeof(void *)
-#if USE_LUA
-                   ,
-               lua_api_version
-#endif
                );
         return 1;
       }
@@ -574,8 +570,6 @@ int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load
           darktable.unmuted |= DT_DEBUG_NAN; // check for NANs when processing the pipe.
         else if(!strcmp(argv[k + 1], "masks"))
           darktable.unmuted |= DT_DEBUG_MASKS; // masks related stuff.
-        else if(!strcmp(argv[k + 1], "lua"))
-          darktable.unmuted |= DT_DEBUG_LUA; // lua errors are reported on console
         else if(!strcmp(argv[k + 1], "print"))
           darktable.unmuted |= DT_DEBUG_PRINT; // print errors are reported on console
         else if(!strcmp(argv[k + 1], "ioporder"))
@@ -1010,35 +1004,6 @@ int dt_init(int argc, char *argv[], const gboolean init_gui, const gboolean load
     // we have to call dt_ctl_switch_mode_to() here already to not run into a lua deadlock.
     // having another call later is ok
     dt_ctl_switch_mode_to(mode);
-
-#ifndef MAC_INTEGRATION
-    // load image(s) specified on cmdline.
-    // this has to happen after lua is initialized as image import can run lua code
-    // If only one image is listed, attempt to load it in darkroom
-    int last_id = 0;
-    gboolean only_single_images = TRUE;
-    int loaded_images = 0;
-
-    for(int i = 1; i < argc; i++)
-    {
-      gboolean single_image = FALSE;
-      if(argv[i] == NULL || *argv[i] == '\0') continue;
-      int new_id = dt_load_from_string(argv[i], FALSE, &single_image);
-      if(new_id > 0)
-      {
-        last_id = new_id;
-        loaded_images++;
-        if(!single_image) only_single_images = FALSE;
-      }
-    }
-
-    if(loaded_images == 1 && only_single_images)
-    {
-      dt_control_set_mouse_over_id(last_id);
-      dt_ctl_switch_mode_to("darkroom");
-    }
-
-#endif
   }
   // construct the popup that asks the user about images whose xmp files are newer than the db entry
   if(init_gui && changed_xmp_files)

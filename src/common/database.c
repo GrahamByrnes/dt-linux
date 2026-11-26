@@ -20,7 +20,6 @@
 #include "config.h"
 #endif
 
-#include "common/database.h"
 #include "common/darktable.h"
 #include "common/debug.h"
 #include "common/file_location.h"
@@ -30,6 +29,7 @@
 #include "control/conf.h"
 #include "control/control.h"
 
+#include "common/database.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -1528,8 +1528,6 @@ void _dt_database_maintenance(const struct dt_database_t *db)
   ERRCHECK
   DT_DEBUG_SQLITE3_EXEC(db->handle, "ANALYZE data", NULL, NULL, &err);
   ERRCHECK
-  DT_DEBUG_SQLITE3_EXEC(db->handle, "ANALYZE main", NULL, NULL, &err);
-  ERRCHECK
 
   // for some reason this is needed in some cases
   // in case above performed vacuum+analyze properly, this is noop.
@@ -1559,19 +1557,20 @@ gboolean _ask_for_maintenance(const gboolean has_gui, const gboolean closing_tim
   char *config = dt_conf_get_string("database/maintenance_check");
 
   if((closing_time && (!g_strcmp0(config, "on both"))) || !g_strcmp0(config, "on startup"))
-    later_info = _("click later to be asked on next startup");
+    later_info = _("Click later to be asked on next startup");
   else if (!closing_time && (!g_strcmp0(config, "on both")))
-    later_info = _("click later to be asked when closing darktable");
+    later_info = _("Click later to be asked when closing darktable");
   else if (!g_strcmp0(config, "on close"))
-    later_info = _("click later to be asked next time when closing darktable");
+    later_info = _("Click later to be asked next time you close darktable");
 
-  char *label_text = g_markup_printf_escaped(_("the database could use some maintenance\n"
-                                                 "\n"
-                                                 "there's <span style=\"italic\">%s</span> to be freed"
-                                                 "\n\n"
-                                                 "do you want to proceed now?\n\n"
-                                                 "%s\n"
-                                                 "you can always change maintenance preferences in core options"),
+  char *label_text = g_markup_printf_escaped(_("\n"
+                                               " The database could use some maintenance \n"
+                                               "\n"
+                                               " There's %s to be freed "
+                                               "\n\n"
+                                               " Do you want to proceed now? \n\n"
+                                               " %s\n"
+                                               " You can always change maintenance preferences in core options  \n"),
                                                  size_info, later_info);
 
     const gboolean shall_perform_maintenance =

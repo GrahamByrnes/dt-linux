@@ -1414,7 +1414,6 @@ static void _pop_menu_dictionary_delete_path(GtkWidget *menuitem, dt_lib_module_
 static void _pop_menu_dictionary_create_tag(GtkWidget *menuitem, dt_lib_module_t *self)
 {
   dt_lib_tagging_t *d = (dt_lib_tagging_t *)self->data;
-
   char *tagname;
   char *path;
   gint tagid;
@@ -1612,7 +1611,9 @@ static void _pop_menu_dictionary_edit_tag(GtkWidget *menuitem, dt_lib_module_t *
     gtk_box_pack_end(GTK_BOX(box), synonyms, TRUE, TRUE, 0);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(synonyms), GTK_WRAP_WORD);
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(synonyms));
-    if (synonyms_list) gtk_text_buffer_set_text(buffer, synonyms_list, -1);
+    
+    if (synonyms_list)
+      gtk_text_buffer_set_text(buffer, synonyms_list, -1);
   }
 
 #ifdef GDK_WINDOWING_QUARTZ
@@ -1712,6 +1713,8 @@ static void _pop_menu_dictionary_edit_tag(GtkWidget *menuitem, dt_lib_module_t *
 
     if (tagid)
     {
+      category = gtk_check_button_new_with_label(_("category"));
+      private = gtk_check_button_new_with_label(_("private"));
       gint new_flags = ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(category)) ? DT_TF_CATEGORY : 0) |
                       (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(private)) ? DT_TF_PRIVATE : 0));
       GtkTextIter start, end;

@@ -34,8 +34,7 @@ if (WIN32 AND NOT BUILD_MSYS2_INSTALL)
   # Please note these are ONLY the files which are not geing detected by fixup_bundle()
   # must be in the bin directory
   message( STATUS "WIN32: Adding dependency files to install" )
-  get_filename_component(MINGW_PATH ${CMAKE_CXX_COMPILER} PATH )
-
+  get_filename_component(MINGW_PATH ${CMAKE_CXX_COMPILER} DIRECTORY )
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
   file(GLOB CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
   #GTK3
@@ -209,7 +208,7 @@ if (WIN32 AND NOT BUILD_MSYS2_INSTALL)
 
   # Add ca-cert for curl
   install(FILES
-      "${MINGW_PATH}/../ssl/certs/ca-bundle.crt"
+      "${MINGW_PATH}/../etc/ssl/certs/ca-bundle.crt"
       DESTINATION share/curl/
       RENAME curl-ca-bundle.crt
       COMPONENT DTApplication)

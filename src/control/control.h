@@ -40,6 +40,8 @@
 // A mask to strip out the Ctrl, Shift, and Alt mod keys for shortcuts
 #define KEY_STATE_MASK (GDK_CONTROL_MASK | GDK_SHIFT_MASK | GDK_MOD1_MASK)
 
+G_BEGIN_DECLS
+
 struct dt_lib_backgroundjob_element_t;
 
 typedef GdkCursorType dt_cursor_t;
@@ -67,8 +69,8 @@ void dt_control_forbid_change_cursor();
 // enable the possibility to change the cursor shape with dt_control_change_cursor
 void dt_control_allow_change_cursor();
 void dt_control_change_cursor(dt_cursor_t cursor);
-void dt_control_write_sidecar_files();
-void dt_control_delete_images();
+//void dt_control_write_sidecar_files();
+//void dt_control_delete_images();
 
 /** \brief request redraw of the workspace.
     This redraws the whole workspace within a gdk critical
@@ -301,6 +303,8 @@ static inline int32_t dt_ctl_get_num_procs()
 #endif
 #endif
 }
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -18,8 +18,10 @@
 
 #pragma once
 
-#include "common/darktable.h"
+//#include "common/darktable.h"
 #include "gui/gtk.h"
+
+G_BEGIN_DECLS
 
 typedef enum dt_metadata_t
 {
@@ -91,7 +93,10 @@ const int dt_metadata_get_type(const uint32_t keyid);
 void dt_metadata_init();
 
 /** Set metadata for a specific image, or all selected for id == -1. */
-void dt_metadata_set(int id, const char *key, const char *value, const gboolean undo_on); // duplicate.c, lua/image.c
+void dt_metadata_set(int id, const char *key, const char *value, const gboolean undo_on); // duplicate.c
+
+/** Locked version of dt_metadata_set_import */
+void dt_metadata_set_import_lock(const int imgid, const char *key, const char *value);
 
 /** Set imported metadata for a specific image */
 void dt_metadata_set_import(int id, const char *key, const char *value); // exif.cc, ligthroom.c
@@ -109,13 +114,15 @@ void dt_metadata_set_list_id(const GList *img, const GList *metadata, const gboo
     For keys which return a string, the caller has to make sure that it
     is freed after usage. */
 GList *dt_metadata_get(int id, const char *key, uint32_t *count); 
-// exif.cc, variables.c, gallery.c, latex.c, piwigo.c, watermark.c, metadata_view.c, libs/metadata.c, print_settings.c, lua/image.c
+// exif.cc, variables.c, gallery.c, latex.c, piwigo.c, watermark.c, metadata_view.c, libs/metadata.c, print_settings.c
 
 /** Get metadata (id keys) for a specific image. The caller has to free the list after usage. */
 GList *dt_metadata_get_list_id(int id); // libs/image.c
 
 /** Remove metadata from specific images, or all selected for id == -1. */
 void dt_metadata_clear(const GList *imgs, const gboolean undo_on); // libs/metadata.c
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

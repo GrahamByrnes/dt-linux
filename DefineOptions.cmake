@@ -1,7 +1,5 @@
 option(USE_NLS "Build Native Language Support (using gettext)" OFF)
 option(USE_COLORD "Enable colord support" ON)
-option(USE_LUA "Build lua scripting support" ON)
-option(DONT_USE_INTERNAL_LUA "Never fall back to the intree copy of lua" ON)
 option(USE_FLICKR "Enable Flickr support" ON)
 option(USE_KWALLET "Build kwallet password storage back-end" ON)
 option(USE_LIBSECRET "Build libsecret password storage back-end" ON)

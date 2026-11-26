@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 struct dt_database_t;
 
 /** allocates and initializes database */
@@ -38,6 +40,8 @@ void dt_database_show_error(const struct dt_database_t *db);
 void dt_database_optimize(const struct dt_database_t *);
 /** conditionally perfrom db maintenance */
 void dt_database_maybe_maintenance(const struct dt_database_t *db, const gboolean has_gui, const gboolean closing_time);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -47,23 +47,15 @@ static gboolean on_match_select(GtkEntryCompletion *widget, GtkTreeModel *model,
   varname = g_value_get_string(&value);
 
   for(p = cur_pos; p - 2 > 0; p--)
-  {
     if(strncmp(s + p - 2, "$(", 2) == 0)
-    {
       break;
-    }
-  }
 
   end = s + cur_pos;
 
   if(end)
-  {
     del_end_pos = end - s + 1;
-  }
   else
-  {
     del_end_pos = cur_pos;
-  }
 
   size_t text_len = strlen(varname) + 2;
   gchar *addtext = (gchar *)g_malloc(text_len);
@@ -131,7 +123,8 @@ static gboolean on_match_func(GtkEntryCompletion *completion, const gchar *key, 
       {
         gchar *case_normalized_string = g_utf8_casefold(normalized_string, -1);
 
-        if(!g_ascii_strncasecmp(varname, case_normalized_string, strlen(varname))) ret = TRUE;
+        if(!g_ascii_strncasecmp(varname, case_normalized_string, strlen(varname)))
+          ret = TRUE;
 
         g_free(case_normalized_string);
       }

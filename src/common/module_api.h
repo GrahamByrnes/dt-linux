@@ -17,11 +17,14 @@
 */
 
 #include <glib.h>
+
 #undef OPTIONAL
 #undef REQUIRED
 #undef DEFAULT
 
 #undef FULL_API_H
+
+//G_BEGIN_DECLS
                            
 
 #ifdef INCLUDE_API_FROM_MODULE_LOAD
@@ -34,6 +37,7 @@
   #define DEFAULT(return_type, function_name, ...) \
       if(!g_module_symbol(module->module, #function_name, (gpointer) & (module->function_name))) \
           module->function_name = default_ ## function_name
+          
 
   dt_print(DT_DEBUG_CONTROL, "[" INCLUDE_API_FROM_MODULE_LOAD "] loading `%s' from %s\n", module_name, libname);
   module->module = g_module_open(libname, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
@@ -87,6 +91,8 @@ skip_error:
   }
   #endif
 #endif
+
+//G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

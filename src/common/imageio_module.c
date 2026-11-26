@@ -68,7 +68,6 @@ static int dt_imageio_load_module_format(dt_imageio_module_format_t *module, con
                                          const char *plugin_name)
 {
   module->widget = NULL;
-  module->parameter_lua_type = LUAA_INVALID_TYPE;
   g_strlcpy(module->plugin_name, plugin_name, sizeof(module->plugin_name));
   dt_print(DT_DEBUG_CONTROL, "[imageio_load_module] loading format module `%s' from %s\n", plugin_name, libname);
   module->module = g_module_open(libname, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
@@ -216,7 +215,6 @@ static int dt_imageio_load_module_storage(dt_imageio_module_storage_t *module, c
                                           const char *plugin_name)
 {
   module->widget = NULL;
-  module->parameter_lua_type = LUAA_INVALID_TYPE;
   g_strlcpy(module->plugin_name, plugin_name, sizeof(module->plugin_name));
   dt_print(DT_DEBUG_CONTROL, "[imageio_load_module] loading storage module `%s' from %s\n", plugin_name, libname);
   module->module = g_module_open(libname, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);

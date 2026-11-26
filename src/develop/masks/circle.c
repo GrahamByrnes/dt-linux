@@ -25,7 +25,8 @@
 #include "develop/masks.h"
 
 static void _circle_get_distance(float x, float y, float as, dt_masks_form_gui_t *gui, int index,
-                                 int num_points, int *inside, int *inside_border, int *near, int *inside_source, float *dist)
+                                 int num_points, int *inside, int *inside_border, int *near,
+                                 int *inside_source, float *dist)
 {
   (void)num_points; // unused arg, keep compiler from complaining
   // initialise returned values

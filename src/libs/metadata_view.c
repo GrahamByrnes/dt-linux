@@ -32,10 +32,6 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <sys/param.h>
-#ifdef USE_LUA
-#include "lua/call.h"
-#include "lua/image.h"
-#endif
 
 #define SHOW_FLAGS 1
 
@@ -221,11 +217,6 @@ static void _metadata_update_value_end(GtkLabel *label, const char *value)
   gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
   gtk_widget_set_tooltip_text(GTK_WIDGET(label), str);
 }
-
-/*
-#ifdef USE_LUA
-static int lua_update_metadata(lua_State*L);
-#endif*/
 
 // update all values to reflect mouse over image id or no data at all
 static void _metadata_view_update_values(dt_lib_module_t *self)
@@ -653,26 +644,15 @@ static void _metadata_view_update_values(dt_lib_module_t *self)
 
     /* release img */
     dt_image_cache_read_release(darktable.image_cache, img);
-/*
-#ifdef USE_LUA
-    dt_lua_async_call_alien(lua_update_metadata,
-        0,NULL,NULL,
-        LUA_ASYNC_TYPENAME,"void*",self,
-        LUA_ASYNC_TYPENAME,"int32_t",mouse_over_id,LUA_ASYNC_DONE);
-#endif*/
   }
 
   return;
 
 /* reset */
 fill_minuses:
-  for(int k = 0; k < md_size; k++) _metadata_update_value(d->metadata[k], NODATA_STRING);
-/*#ifdef USE_LUA
-  dt_lua_async_call_alien(lua_update_metadata,
-      0,NULL,NULL,
-        LUA_ASYNC_TYPENAME,"void*",self,
-        LUA_ASYNC_TYPENAME,"int32_t",-1,LUA_ASYNC_DONE);
-#endif*/
+  for(int k = 0; k < md_size; k++)
+    _metadata_update_value(d->metadata[k], NODATA_STRING);
+
 }
 
 static void _jump_to()

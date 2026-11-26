@@ -82,7 +82,7 @@ typedef struct dt_thumbtable_t
   // for some reasons, in filemanager, first image can not be at x=0
   // in that case, we count the number of "scroll-top" try and reallign after 2 try
   int realign_top_try;
-  gboolean mouse_inside; // is the mouse pointer inside thumbatable widget ?
+  gboolean mouse_inside; // is the mouse pointer inside thumbtable widget ?
   GSList *accel_closures; // list of associated accels
 
   // when performing a drag, we store the list of items to drag here
@@ -95,6 +95,9 @@ typedef struct dt_thumbtable_t
 
   int pref_embedded;
   int pref_hq;
+   // scroll timeout values
+  guint scroll_timeout_id;
+  float scroll_value;
 } dt_thumbtable_t;
 
 dt_thumbtable_t *dt_thumbtable_new();
@@ -110,17 +113,15 @@ gboolean dt_thumbtable_set_offset_image(dt_thumbtable_t *table, int imgid, gbool
 
 // fired when the zoom level change
 void dt_thumbtable_zoom_changed(dt_thumbtable_t *table, int oldzoom, int newzoom);
-
-// ensure that the mentionned image is visible by moving the view if needed
+// or when the scrollbar is changed
+void dt_thumbtable_scrollbar_changed(dt_thumbtable_t *table, const float x, const float y);
+// ensure that the mentioned image is visible by moving the view if needed
 gboolean dt_thumbtable_ensure_imgid_visibility(dt_thumbtable_t *table, int imgid);
 // check if the mentioned image is visible
 gboolean dt_thumbtable_check_imgid_visibility(dt_thumbtable_t *table, int imgid);
-
 // ensure the first image in collection as no offset (is positionned on top-left)
 gboolean dt_thumbtable_reset_first_offset(dt_thumbtable_t *table);
 
-// scrollbar change
-void dt_thumbtable_scrollbar_changed(dt_thumbtable_t *table, float x, float y);
 
 // change the type of overlays that should be shown (over or under the image)
 void dt_thumbtable_set_overlays_mode(dt_thumbtable_t *table, dt_thumbnail_overlay_t over);

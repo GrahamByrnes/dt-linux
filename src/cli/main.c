@@ -247,7 +247,7 @@ int main(int argc, char *arg[])
   }
 
   // init dt without gui and without data.db:
-  if(dt_init(m_argc, m_arg, FALSE, custom_presets, NULL))
+  if(dt_init(m_argc, m_arg, FALSE, custom_presets))
   {
     free(m_arg);
     exit(1);

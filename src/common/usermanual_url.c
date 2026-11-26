@@ -31,7 +31,7 @@ char *dt_get_help_url(char *name)
   if(!strcmp(name, "styles")) return "styles.html#styles";
   if(!strcmp(name, "metadata")) return "metadata_editor.html#metadata_editor";
   if(!strcmp(name, "tagging")) return "tagging.html#tagging";
-  if(!strcmp(name, "geotagging")) return "geotagging.html#geotagging";
+  if(!strcmp(name, "geotagging")) return "geotagging.html#geotagging";/*********************/
   if(!strcmp(name, "collect")) return "collect_images.html#collect_images";
   if(!strcmp(name, "recentcollect")) return "recently_used_collections.html#recently_used_collections";
   if(!strcmp(name, "metadata_view")) return "image_information.html#image_information";
@@ -46,12 +46,12 @@ char *dt_get_help_url(char *name)
   if(!strcmp(name, "duplicate")) return "duplicate.html#duplicate";
   if(!strcmp(name, "modulelist")) return "more_modules.html#more_modules";
   if(!strcmp(name, "location")) return "find_location.html#find_location";
-  if(!strcmp(name, "map_settings")) return "map_settings.html#map_settings";
+  if(!strcmp(name, "map_settings")) return "map_settings.html#map_settings";/*********************/
   if(!strcmp(name, "print_settings")) return "print_settings.html#print_settings";
   if(!strcmp(name, "global_toolbox")) return NULL;
   if(!strcmp(name, "global_toolbox_preferences")) return "preferences.html#preferences";
   if(!strcmp(name, "global_toolbox_help")) return "contextual_help.html#contextual_help";
-  if(!strcmp(name, "lighttable_mode")) return "lighttable_chapter.html#lighttable_overview";
+  if(!strcmp(name, "lighttable_mode")) return "lighttable_chapter.html#lighttable_overview";/*********************/
   if(!strcmp(name, "lighttable_filemanager")) return "lighttable_chapter.html#lighttable_filemanager";
   if(!strcmp(name, "lighttable_zoomable")) return "lighttable_chapter.html#lighttable_zoomable";
   if(!strcmp(name, "module_toolbox")) return NULL;

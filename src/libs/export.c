@@ -796,42 +796,40 @@ void gui_init(dt_lib_module_t *self)
   gtk_box_pack_start(GTK_BOX(self->widget), label, FALSE, TRUE, 0);
 
   d->dimensions_type = dt_bauhaus_combobox_new(NULL);
-  dt_bauhaus_widget_set_label(d->dimensions_type, NULL, _("unit"));
-  gtk_widget_set_tooltip_text(d->dimensions_type, _("unit in which to input the image size"));
+  dt_bauhaus_widget_set_label(d->dimensions_type, NULL, _("unit"));/********/
+  gtk_widget_set_tooltip_text(d->dimensions_type, _("unit for the image size"));
   dt_bauhaus_combobox_add(d->dimensions_type, _("pixels (file size)"));
   dt_bauhaus_combobox_add(d->dimensions_type, _("cm (print size)"));
   dt_bauhaus_combobox_add(d->dimensions_type, _("in (print size)"));
   dt_bauhaus_combobox_set(d->dimensions_type, dt_conf_get_int(CONFIG_PREFIX "dimensions_type"));
 
+/*******/
   d->print_width = gtk_entry_new();
   gtk_widget_set_tooltip_text(d->print_width, _("maximum output width\nset to 0 for no scaling"));
   gtk_entry_set_width_chars(GTK_ENTRY(d->print_width), 5);
+  
   d->print_height = gtk_entry_new();
   gtk_widget_set_tooltip_text(d->print_height, _("maximum output height\nset to 0 for no scaling"));
   gtk_entry_set_width_chars(GTK_ENTRY(d->print_height), 5);
+  
   d->print_dpi = gtk_entry_new();
   gtk_widget_set_tooltip_text(d->print_dpi, _("resolution in dot per inch"));
   gtk_entry_set_width_chars(GTK_ENTRY(d->print_dpi), 4);
+  
   const char *dpi = dt_conf_get_string_const(CONFIG_PREFIX "print_dpi");
   gtk_entry_set_text(GTK_ENTRY(d->print_dpi), dpi);
-
-  dt_gui_key_accel_block_on_focus_connect(d->print_width);
-  dt_gui_key_accel_block_on_focus_connect(d->print_height);
-  dt_gui_key_accel_block_on_focus_connect(d->print_dpi);
 
   d->width = gtk_entry_new();
   gtk_widget_set_tooltip_text(d->width, _("maximum output width\nset to 0 for no scaling"));
   gtk_entry_set_width_chars(GTK_ENTRY(d->width), 5);
+  
   d->height = gtk_entry_new();
   gtk_widget_set_tooltip_text(d->height, _("maximum output height\nset to 0 for no scaling"));
   gtk_entry_set_width_chars(GTK_ENTRY(d->height), 5);
-
-  dt_gui_key_accel_block_on_focus_connect(d->width);
-  dt_gui_key_accel_block_on_focus_connect(d->height);
-
+  
   GtkBox *hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3));
   gtk_widget_set_name(GTK_WIDGET(hbox), "export-max-size");
-  label = gtk_label_new(_("max size"));
+  label = gtk_label_new(_("\nmax size  "));
   gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_END);
   g_object_set(G_OBJECT(label), "xalign", 0.0, (gchar *)0);
   gtk_box_pack_start(hbox, label, FALSE, FALSE, 0);
@@ -839,17 +837,18 @@ void gui_init(dt_lib_module_t *self)
   GtkBox *vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 3));
   gtk_box_pack_start(vbox, d->dimensions_type, TRUE, TRUE, 0);
 
-  GtkBox *hbox2 = d->print_size = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3));
+  GtkBox *hbox2 = d->print_size = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3));/****/
   gtk_box_pack_start(hbox2, d->print_width, TRUE, TRUE, 0);
   gtk_box_pack_start(hbox2, gtk_label_new(_("x")), FALSE, FALSE, 0);
   gtk_box_pack_start(hbox2, d->print_height, TRUE, TRUE, 0);
+  
   d->unit_label = gtk_label_new(_("cm"));
   gtk_box_pack_start(hbox2, d->unit_label, FALSE, FALSE, 0);
   gtk_box_pack_start(hbox2, d->print_dpi, TRUE, TRUE, 0);
   gtk_box_pack_start(hbox2, gtk_label_new(_("dpi")), FALSE, FALSE, 0);
   gtk_box_pack_start(vbox, GTK_WIDGET(hbox2), TRUE, TRUE, 0);
 
-  GtkBox *hbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3));
+  GtkBox *hbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3));/*****/
   gtk_box_pack_start(hbox1, d->width, TRUE, TRUE, 0);
   gtk_box_pack_start(hbox1, gtk_label_new(_("x")), FALSE, FALSE, 0);
   gtk_box_pack_start(hbox1, d->height, TRUE, TRUE, 0);
@@ -881,7 +880,7 @@ void gui_init(dt_lib_module_t *self)
   d->profile = dt_bauhaus_combobox_new(NULL);
   dt_bauhaus_widget_set_label(d->profile, NULL, _("profile"));
   gtk_box_pack_start(GTK_BOX(self->widget), d->profile, FALSE, TRUE, 0);
-  dt_bauhaus_combobox_add(d->profile, _("image settings"));
+  //dt_bauhaus_combobox_add(d->profile, _("image settings"));
 
   for(GList *l = darktable.color_profiles->profiles; l; l = g_list_next(l))
   {
@@ -901,12 +900,13 @@ void gui_init(dt_lib_module_t *self)
   //  Add intent combo
   d->intent = dt_bauhaus_combobox_new(NULL);
   dt_bauhaus_widget_set_label(d->intent, NULL, _("intent"));
-  dt_bauhaus_combobox_add(d->intent, _("image settings"));
+  //dt_bauhaus_combobox_add(d->intent, _("image settings"));/********/
   dt_bauhaus_combobox_add(d->intent, _("perceptual"));
   dt_bauhaus_combobox_add(d->intent, _("relative colorimetric"));
   dt_bauhaus_combobox_add(d->intent, C_("rendering intent", "saturation"));
   dt_bauhaus_combobox_add(d->intent, _("absolute colorimetric"));
   gtk_box_pack_start(GTK_BOX(self->widget), d->intent, FALSE, TRUE, 0);
+  
   //  Set callback signals
   g_signal_connect(G_OBJECT(d->upscale), "value-changed", G_CALLBACK(_callback_bool),
                    (gpointer)CONFIG_PREFIX "upscale");

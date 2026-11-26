@@ -1,6 +1,7 @@
 add_subdirectory(pixmaps)
 
 FILE(GLOB THEME_FILES "themes/*.css")
+FILE(COPY ${THEME_FILES} DESTINATION "${DARKTABLE_DATADIR}/themes")                                                                   
 install(FILES ${THEME_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/darktable/themes COMPONENT DTApplication)
 
 #
@@ -17,64 +18,52 @@ install(DIRECTORY "pswp" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/darktable COMP
 FILE(GLOB WEB_FILES "latex/*")
 install(FILES ${WEB_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/darktable/latex COMPONENT DTApplication)
 
-if(USE_LUA)
-#
-# lua system scripts
-#
-install(DIRECTORY "lua" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/darktable COMPONENT DTApplication)
-install(FILES luarc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/darktable COMPONENT DTApplication)
-endif(USE_LUA)
-
 #
 # Install (and generate when necessary) other system shares
 #
-if(NOT WIN32)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/darktable.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in)
-file(GLOB PO_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../po/*.po")
-add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
-		SOURCE ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in
-		COMMAND ${intltool_merge_BIN} --desktop-style ${CMAKE_CURRENT_SOURCE_DIR}/../po ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
-		MAIN_DEPENDENCY ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in
-		DEPENDS ${PO_FILES}
-)
-add_custom_target(darktable.desktop_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop)
-if(${VALIDATE_DESKTOP_FILE})
-  add_custom_target(
-    validate_darktable_desktop ALL
-    COMMAND ${desktop_file_validate_BIN} --warn-kde ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
-    COMMENT "Checking validity of darktable.desktop"
-    )
-  add_dependencies(darktable.desktop_file validate_darktable_desktop)
-endif()
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications COMPONENT DTApplication)
-endif(NOT WIN32)
+#if(NOT WIN32)
+#  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/darktable.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in)
+  #file(GLOB PO_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../po/*.po")
 
-if(${VALIDATE_APPDATA_FILE})
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
-    SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
-    COMMAND ${intltool_merge_BIN} --xml-style ${CMAKE_CURRENT_SOURCE_DIR}/../po ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
-    COMMAND ${appstream_util_BIN} validate --nonet ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
-    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
-    DEPENDS ${PO_FILES}
-  )
-else()
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
-    SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
-    COMMAND ${intltool_merge_BIN} --xml-style ${CMAKE_CURRENT_SOURCE_DIR}/../po ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
-    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
-    DEPENDS ${PO_FILES}
-  )
-endif()
+  
+#  add_custom_command(
+#	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
+#	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
+#	MAIN_DEPENDENCY ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop.in
+#	DEPENDS ${PO_FILES} ## already commented out
+#  )
+#  add_custom_target(darktable.desktop_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop)
+#  if(${VALIDATE_DESKTOP_FILE})
+#    add_custom_target(
+#      validate_darktable_desktop ALL
+#      COMMAND ${desktop_file_validate_BIN} --warn-kde ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
+#      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop
+#      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+#      COMMENT "Checking validity of org.darktable.darktable.desktop"
+#      )
+#    add_dependencies(darktable.desktop_file validate_darktable_desktop)
+#  endif()
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/darktable.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications COMPONENT DTApplication)
 
-add_custom_target(darktable.appdata_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml)
+#  if(${VALIDATE_APPDATA_FILE})
+#    add_custom_command(
+#      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
+#      SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in                   
+#      COMMAND ${appstream_util_BIN} validate --nonet ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
+#      MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
+#    )  
+#  else()
+#    add_custom_command(
+#      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml                                                                 
+#      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml
+#      MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/darktable.appdata.xml.in
+#    )
+#  endif()
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata COMPONENT DTApplication)
+#  add_custom_target(darktable.appdata_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml)
 
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/darktable.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata COMPONENT DTApplication)
+#endif(NOT WIN32)                
 #
 # Install watermarks
 #

@@ -28,6 +28,7 @@
 #include <glib.h>
 #include <inttypes.h>
 
+G_BEGIN_DECLS
 /** return value of image io functions. */
 typedef enum dt_imageio_retval_t
 {
@@ -268,7 +269,7 @@ int dt_image_get_xmp_rating(const dt_image_t *img);
 int dt_image_get_xmp_rating_from_flags(const int flags);
 /** finds all xmp duplicates for the given image in the database. */
 GList* dt_image_find_duplicates(const char* filename);
-/** imports a new image from raw/etc file and adds it to the data base and image cache. Use from threads other than lua.*/
+/** imports a new image from raw/etc file and adds it to the data base and image cache. */
 uint32_t dt_image_import(int32_t film_id, const char *filename, gboolean override_ignore_jpegs);
 /** removes the given image from the database. */
 void dt_image_remove(const int32_t imgid);
@@ -330,8 +331,8 @@ static inline dt_image_orientation_t dt_image_orientation_to_flip_bits(const int
       return ORIENTATION_FLIP_VERTICALLY;
     case EXIF_ORIENTATION_TRANSPOSE:
       return ORIENTATION_TRANSPOSE;
-    case EXIF_ORIENTATION_ROTATE_CW_90_DEG:
-      return ORIENTATION_ROTATE_CW_90_DEG;
+//    case EXIF_ORIENTATION_ROTATE_CW_90_DEG:
+//      return ORIENTATION_ROTATE_CW_90_DEG;
     case EXIF_ORIENTATION_TRANSVERSE:
       return ORIENTATION_TRANSVERSE;
     case EXIF_ORIENTATION_ROTATE_CCW_90_DEG:
@@ -373,6 +374,8 @@ char *dt_image_get_text_path(const int32_t imgid);
 char *dt_image_get_text_path_from_path(const char *image_path);
 
 float dt_image_get_exposure_bias(const struct dt_image_t *image_storage);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

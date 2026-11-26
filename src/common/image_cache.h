@@ -21,6 +21,8 @@
 #include "common/cache.h"
 #include "common/image.h"
 
+G_BEGIN_DECLS
+
 typedef struct dt_image_cache_t
 {
   dt_cache_t cache;
@@ -71,6 +73,8 @@ void dt_image_cache_set_change_timestamp(dt_image_cache_t *cache, const int32_t 
 void dt_image_cache_unset_change_timestamp(dt_image_cache_t *cache, const int32_t imgid);
 void dt_image_cache_set_export_timestamp(dt_image_cache_t *cache, const int32_t imgid);
 void dt_image_cache_set_print_timestamp(dt_image_cache_t *cache, const int32_t imgid);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

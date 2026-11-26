@@ -8561,7 +8561,6 @@ const wb_data wb_preset[] =
   { "Panasonic", "DMC-GM1", Flash              , 8, { 2.2613636363636362, 1, 1.753787878787879, 0 } },
   { "Panasonic", "DMC-GM1", Flash              , 9, { 2.2234848484848486, 1, 1.7878787878787878, 0 } },
 
-
   /* Firmware version 1.1 */
   { "Panasonic", "DMC-GM5", Daylight, 0,        { 2.394531, 1, 1.554687, 0 } },
   { "Panasonic", "DMC-GM5", Cloudy, 0,          { 2.621093, 1, 1.437500, 0 } },
@@ -8997,7 +8996,7 @@ const wb_data wb_preset[] =
   { "Pentax", "K-3", WarmWhiteFluorescent, 0,	{ 1.74609, 1, 2.53125, 0 } },
   { "Pentax", "K-3", Flash, 0,			{ 2.56641, 1, 1.31641, 0 } },
 
-  /* RICOH IMAGING COMPANY, LTD. PENTAX K-3 II Firmware Version 1.10 */
+  /* Pentax K-3 II Firmware version 1.10 */
   { "Pentax", "K-3 II", Daylight, 0,             { 2.1875, 1, 1.578125, 0 } },
   { "Pentax", "K-3 II", Shade, 0,                { 2.703125, 1, 1.16015625, 0 } },
   { "Pentax", "K-3 II", Cloudy, 0,               { 2.41796875, 1, 1.33984375, 0 } },
@@ -9007,6 +9006,17 @@ const wb_data wb_preset[] =
   { "Pentax", "K-3 II", WarmWhiteFluorescent, 0, { 1.6953125, 1, 2.515625, 0 } },
   { "Pentax", "K-3 II", Tungsten, 0,             { 1.3203125, 1, 2.7265625, 0 } },
   { "Pentax", "K-3 II", Flash, 0,                { 2.48828125, 1, 1.30859375, 0 } },
+  
+  /* Pentax K-3 III Firmware version 1.10 (copy from version II)*/
+  { "Pentax", "K-3 III", Daylight, 0,             { 2.1875, 1, 1.578125, 0 } },
+  { "Pentax", "K-3 III", Shade, 0,                { 2.703125, 1, 1.16015625, 0 } },
+  { "Pentax", "K-3 III", Cloudy, 0,               { 2.41796875, 1, 1.33984375, 0 } },
+  { "Pentax", "K-3 III", DaylightFluorescent, 0,  { 2.62890625, 1, 1.51171875, 0 } },
+  { "Pentax", "K-3 III", DayWhiteFluorescent, 0,  { 2.23828125, 1, 1.6953125, 0 } },
+  { "Pentax", "K-3 III", WhiteFluorescent, 0,     { 2.01171875, 1, 2.0234375, 0 } },
+  { "Pentax", "K-3 III", WarmWhiteFluorescent, 0, { 1.6953125, 1, 2.515625, 0 } },
+  { "Pentax", "K-3 III", Tungsten, 0,             { 1.3203125, 1, 2.7265625, 0 } },
+  { "Pentax", "K-3 III", Flash, 0,                { 2.48828125, 1, 1.30859375, 0 } },
 
   { "Pentax", "K-5", Daylight, 0,		{ 2.1211, 1, 1.5781, 0 } },
   { "Pentax", "K-5", Shade, 0,			{ 2.5312, 1, 1.1758, 0 } },
@@ -9271,7 +9281,6 @@ const wb_data wb_preset[] =
   { "Pentax", "K-S2", Flash               , 6, { 2.515625, 1, 1.51171875, 0 } },
   { "Pentax", "K-S2", Flash               , 7, { 2.48046875, 1, 1.5390625, 0 } },
 
-
   /* Pentax Q Firmware Version Pentax Q Ver 1.00 */
   { "Pentax", "Q", Daylight, 0,               { 1.51513671875, 1, 1.85888970408413, 0 } },
   { "Pentax", "Q", Shade, 0,                  { 1.8182373046875, 1, 1.4179505991685, 0 } },
@@ -9288,8 +9297,8 @@ const wb_data wb_preset[] =
   { "Pentax", "Q7", Shade, 0,                 { 2.05029296875, 1, 1.40107277825186, 0 } },
   { "Pentax", "Q7", Cloudy, 0,                { 1.923095703125, 1, 1.59770815555285, 0 } },
   { "Pentax", "Q7", Tungsten, 0,              { 1.0172119140625, 1, 3.14640985005486, 0 } },
-  { "Pentax", "Q7", DaylightFluorescent, 0,          { 2.2210693359375, 1, 1.76984030232842, 0 } },
-  { "Pentax", "Q7", WhiteFluorescent, 0,          { 1.9072265625, 1, 2.0032914787273, 0 } },
+  { "Pentax", "Q7", DaylightFluorescent, 0,   { 2.2210693359375, 1, 1.76984030232842, 0 } },
+  { "Pentax", "Q7", WhiteFluorescent, 0,      { 1.9072265625, 1, 2.0032914787273, 0 } },
   { "Pentax", "Q7", CoolWhiteFluorescent, 0,          { 1.780029296875, 1, 2.48262830671705, 0 } },
   { "Pentax", "Q7", Flash, 0,                 { 1.9866943359375, 1, 1.49945142021212, 0 } },
   { "Pentax", "Q7", WarmWhiteFluorescent, 0,          { 1.4940185546875, 1, 2.8882116298915, 0 } },
@@ -9322,16 +9331,16 @@ const wb_data wb_preset[] =
   { "Ricoh", "GR", WarmWhiteFluorescent, 0,	{ 2.240000, 1, 2.160000, 0 } },
   { "Ricoh", "GR", "5000K", 0,			{ 2.890000, 1, 1.520000, 0 } },
 
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", Daylight, 0,		{ 3.062000, 1, 1.545000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", Shade, 0,			{ 3.319000, 1, 1.385000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", Cloudy, 0,			{ 3.058000, 1, 1.538000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", Incandescent, 0,		{ 1.944000, 1, 2.384000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", IncandescentWarm, 0,	{ 2.276000, 1, 2.052000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", DaylightFluorescent, 0,	{ 3.062000, 1, 1.545000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", WhiteFluorescent, 0,	{ 2.837000, 1, 1.698000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", CoolWhiteFluorescent, 0,	{ 2.642000, 1, 2.125000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", WarmWhiteFluorescent, 0,	{ 2.354000, 1, 2.027000, 0 } },
-  { "RICOH IMAGING COMPANY, LTD.", "GR II", "5000K", 0,			{ 2.867000, 1, 1.662000, 0 } },
+  { "Ricoh", "GR II", Daylight, 0,		{ 3.062000, 1, 1.545000, 0 } },
+  { "Ricoh", "GR II", Shade, 0,			{ 3.319000, 1, 1.385000, 0 } },
+  { "Ricoh", "GR II", Cloudy, 0,			{ 3.058000, 1, 1.538000, 0 } },
+  { "Ricoh", "GR II", Incandescent, 0,		{ 1.944000, 1, 2.384000, 0 } },
+  { "Ricoh", "GR II", IncandescentWarm, 0,	{ 2.276000, 1, 2.052000, 0 } },
+  { "Ricoh", "GR II", DaylightFluorescent, 0,	{ 3.062000, 1, 1.545000, 0 } },
+  { "Ricoh", "GR II", WhiteFluorescent, 0,	{ 2.837000, 1, 1.698000, 0 } },
+  { "Ricoh", "GR II", CoolWhiteFluorescent, 0,	{ 2.642000, 1, 2.125000, 0 } },
+  { "Ricoh", "GR II", WarmWhiteFluorescent, 0,	{ 2.354000, 1, 2.027000, 0 } },
+  { "Ricoh", "GR II", "5000K", 0,			{ 2.867000, 1, 1.662000, 0 } },
 
   { "Samsung", "EX1", Daylight, 0,		{ 1.8711, 1, 2.0039, 0 } },
   { "Samsung", "EX1", Cloudy, 0,		{ 2.3672, 1, 1.6797, 0 } },

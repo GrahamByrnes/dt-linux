@@ -291,8 +291,6 @@ static void process_cmatrix_bm(struct dt_iop_module_t *self, dt_dev_pixelpipe_io
   const dt_iop_colorin_data_t *const d = (dt_iop_colorin_data_t *)piece->data;
   const int clipping = (d->nrgb != NULL);
 
-    // fprintf(stderr, "Using cmatrix codepath\n");
-    // only color matrix. use our optimized fast path!
 #ifdef _OPENMP
 #pragma omp parallel for default(none) \
   dt_omp_firstprivate(clipping, d, ivoid, ovoid, roi_out) \
@@ -728,7 +726,7 @@ void commit_params(struct dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pix
     {
       if(dt_image_is_matrix_correction_supported(&pipe->image))
       {
-        fprintf(stderr, "[colorin] `%s' color matrix not found!\n", pipe->image.camera_makermodel);
+        //fprintf(stderr, "[colorin] `%s' color matrix not found!\n", pipe->image.camera_makermodel);
         dt_control_log(_("`%s' color matrix not found!"), pipe->image.camera_makermodel);
       }
       type = DT_COLORSPACE_LIN_REC709;

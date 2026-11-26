@@ -62,6 +62,7 @@ DT_MODULE(1)
  */
 typedef struct dt_library_t
 {
+  dt_lighttable_layout_t current_layout;
   GtkWidget *profile_floating_window;
 } dt_library_t;
 
@@ -88,8 +89,8 @@ void cleanup(dt_view_t *self)
 }
 
 // display help text in the center view if there's no image to show
-static int _lighttable_expose_empty(dt_view_t *self, cairo_t *cr, int32_t width, int32_t height, int32_t pointerx,
-                                    int32_t pointery)
+static int _lighttable_expose_empty(dt_view_t *self, cairo_t *cr, int32_t width, int32_t height,
+                                    int32_t pointerx, int32_t pointery)
 {
   const float fs = DT_PIXEL_APPLY_DPI(15.0f);
   const float ls = 1.5f * fs;
@@ -163,13 +164,13 @@ void expose(dt_view_t *self, cairo_t *cr, int32_t width, int32_t height, int32_t
   const double end = dt_get_wtime();
 
   if(darktable.unmuted & DT_DEBUG_PERF)
-    dt_print(DT_DEBUG_LIGHTTABLE, "[lighttable] expose took %0.04f sec\n", end - start);
+    fprintf(stderr, "[lighttable] expose took %0.04f sec\n", end - start);
 }
 
 void enter(dt_view_t *self)
 {
-  // we want to reacquire the thumbtable if needed
-  dt_thumbtable_set_parent(dt_ui_thumbtable(darktable.gui->ui), dt_ui_center_base(darktable.gui->ui),
+  dt_thumbtable_set_parent(dt_ui_thumbtable(darktable.gui->ui),
+                           dt_ui_center_base(darktable.gui->ui),
                            DT_THUMBTABLE_MODE_FILEMANAGER);
   gtk_widget_show(dt_ui_thumbtable(darktable.gui->ui)->widget);
 
@@ -180,6 +181,7 @@ void enter(dt_view_t *self)
 
   dt_lib_set_visible(darktable.view_manager->proxy.filmstrip.module, FALSE); // not available in this layouts
   dt_lib_set_visible(darktable.view_manager->proxy.timeline.module, TRUE); // always on, visibility is driven by panel state
+  dt_ui_scrollbars_show(darktable.gui->ui, dt_conf_get_bool("lighttable/ui/scrollbars")); //added 2026_04_21
   // restore panels
   dt_ui_restore_panels(darktable.gui->ui);
 }
@@ -202,6 +204,15 @@ void reset(dt_view_t *self)
   dt_control_set_mouse_over_id(-1);
 }
 
+void scrollbar_changed(dt_view_t *self, const double x, const double y)
+{
+  const dt_lighttable_layout_t layout =
+    dt_view_lighttable_get_layout(darktable.view_manager);
+
+  if(layout == DT_LIGHTTABLE_LAYOUT_FILEMANAGER)
+    dt_thumbtable_scrollbar_changed(dt_ui_thumbtable(darktable.gui->ui), x, y);
+}
+
 int key_released(dt_view_t *self, guint key, guint state)
 {
   return 1;
@@ -218,29 +229,15 @@ GSList *mouse_actions(const dt_view_t *self)
   dt_mouse_action_t *a = NULL;
 
   a = (dt_mouse_action_t *)calloc(1, sizeof(dt_mouse_action_t));
+  
   a->action = DT_MOUSE_ACTION_DOUBLE_LEFT;
   g_strlcpy(a->name, _("open image in darkroom"), sizeof(a->name));
   lm = g_slist_append(lm, a);
 
-  a = (dt_mouse_action_t *)calloc(1, sizeof(dt_mouse_action_t));
-  a->action = DT_MOUSE_ACTION_SCROLL;
-  g_strlcpy(a->name, _("scroll the collection"), sizeof(a->name));
-  lm = g_slist_append(lm, a);
-
-  a = (dt_mouse_action_t *)calloc(1, sizeof(dt_mouse_action_t));
   a->key.accel_mods = GDK_CONTROL_MASK;
   a->action = DT_MOUSE_ACTION_SCROLL;
   g_strlcpy(a->name, _("change number of images per row"), sizeof(a->name));
   lm = g_slist_append(lm, a);
-
-  if(darktable.collection->params.sort == DT_COLLECTION_SORT_CUSTOM_ORDER)
-  {
-    a = (dt_mouse_action_t *)calloc(1, sizeof(dt_mouse_action_t));
-    a->key.accel_mods = GDK_BUTTON1_MASK;
-    a->action = DT_MOUSE_ACTION_DRAG_DROP;
-    g_strlcpy(a->name, _("change image order"), sizeof(a->name));
-    lm = g_slist_append(lm, a);
-  }
 
   return lm;
 }
@@ -532,9 +529,8 @@ void gui_init(dt_view_t *self)
   g_signal_connect(G_OBJECT(display_profile), "value-changed", G_CALLBACK(_profile_display_profile_callback), NULL);
 
   g_signal_connect(G_OBJECT(display2_intent), "value-changed", G_CALLBACK(_profile_display2_intent_callback), NULL);
-  g_signal_connect(G_OBJECT(display2_profile), "value-changed", G_CALLBACK(_profile_display2_profile_callback),
-                   NULL);
-
+  g_signal_connect(G_OBJECT(display2_profile), "value-changed", G_CALLBACK(_profile_display2_profile_callback), NULL);
+  
   // update the gui when profiles change
   dt_control_signal_connect(darktable.signals, DT_SIGNAL_CONTROL_PROFILE_USER_CHANGED,
                             G_CALLBACK(_profile_display_changed), (gpointer)display_profile);

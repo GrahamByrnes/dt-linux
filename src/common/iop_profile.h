@@ -25,6 +25,8 @@
 #include "config.h"
 #endif
 
+G_BEGIN_DECLS
+
 struct dt_iop_module_t;
 struct dt_develop_t;
 struct dt_dev_pixelpipe_t;
@@ -214,3 +216,5 @@ static inline float dt_ioppr_uncompensate_middle_grey(const float x, const dt_io
 }
 
 #endif
+
+G_END_DECLS

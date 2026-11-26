@@ -71,7 +71,7 @@ static inline void dt_imageio_dng_convert_rational(float f, int32_t *num, int32_
   *num *= sign;
 }
 
-static inline void dt_imageio_dng_write_tiff_header(
+static inline void _imageio_dng_write_tiff_header(
     FILE *fp, uint32_t xs, uint32_t ys, float Tv, float Av,
     float f, float iso, uint32_t filter,
     const uint8_t xtrans[6][6],
@@ -106,13 +106,12 @@ static inline void dt_imageio_dng_write_tiff_header(
   //   offs2 = b + 8;
   b = dt_imageio_dng_make_tag(273, LONG, 1, 584, b, &cnt);             /* Strip offset.  */
   b = dt_imageio_dng_make_tag(274, SHORT, 1, 1 << 16, b, &cnt);        /* Orientation. */
+    
   b = dt_imageio_dng_make_tag(277, SHORT, 1, channels << 16, b, &cnt); /* Samples per pixel.  */
   b = dt_imageio_dng_make_tag(278, SHORT, 1, (ys << 16), b, &cnt);     /* Rows per strip.  */
-  b = dt_imageio_dng_make_tag(279, LONG, 1, (ys * xs * channels * 4), b,
-                              &cnt);                              // 32 bits/channel /* Strip byte count.  */
+  b = dt_imageio_dng_make_tag(279, LONG, 1, (ys * xs * channels * 4), b, &cnt);                              // 32 bits/channel /* Strip byte count.  */
   b = dt_imageio_dng_make_tag(284, SHORT, 1, (1 << 16), b, &cnt); /* Planar configuration.  */
-  b = dt_imageio_dng_make_tag(339, SHORT, 1, (3 << 16), b,
-                              &cnt); /* SampleFormat = 3 => ieee floating point */
+  b = dt_imageio_dng_make_tag(339, SHORT, 1, (3 << 16), b, &cnt); /* SampleFormat = 3 => ieee floating point */
 
   if(filter == 9u) // xtrans
     b = dt_imageio_dng_make_tag(33421, SHORT, 2, (6 << 16) | 6, b, &cnt); /* CFAREPEATEDPATTERNDIM */
@@ -160,7 +159,7 @@ static inline void dt_imageio_dng_write_tiff_header(
   buf[11] = cnt - 1; // write number of directory entries of this ifd
 
   // exif is written later, by exiv2:
-  // printf("offset: %d\n", b - buf); // find out where we're writing data
+   printf("offset: %ld\n", b - buf); // find out where we're writing data
   // apparently this doesn't need byteswap:
   memcpy(buf+400, xtrans, sizeof(uint8_t)*36);
   // this matrix is generic for XYZ->sRGB / D65
@@ -173,6 +172,7 @@ static inline void dt_imageio_dng_write_tiff_header(
 
   // dt_imageio_dng_write_buf(buf, offs2-buf, 584);
   int written = fwrite(buf, 1, 584, fp);
+  
   if(written != 584) fprintf(stderr, "[dng_write_header] failed to write image header!\n");
 }
 
@@ -185,7 +185,7 @@ static inline void dt_imageio_write_dng(
   FILE *f = g_fopen(filename, "wb");
   if(f)
   {
-    dt_imageio_dng_write_tiff_header(f, wd, ht, 1.0f / 100.0f, 1.0f / 4.0f, 50.0f, 100.0f, filter, xtrans, whitelevel);
+    _imageio_dng_write_tiff_header(f, wd, ht, 1.0f / 100.0f, 1.0f / 4.0f, 50.0f, 100.0f, filter, xtrans, whitelevel);
     const int k = fwrite(pixel, sizeof(float), wd * ht, f);
     if(k != wd * ht) fprintf(stderr, "[dng_write] Error writing image data to %s\n", filename);
     fclose(f);

@@ -36,6 +36,8 @@
 // FIXME: kill this pls.
 #define FILTERS_ARE_4BAYER(filters) (FILTERS_ARE_CYGM(filters) || FILTERS_ARE_RGBE(filters))
 
+G_BEGIN_DECLS
+
 typedef enum dt_imageio_levels_t
 {
   IMAGEIO_INT8 = 0x0,
@@ -107,6 +109,8 @@ int dt_imageio_large_thumbnail(const char *filename, uint8_t **buffer, int32_t *
 gboolean dt_imageio_lookup_makermodel(const char *maker, const char *model,
                                       char *mk, int mk_len, char *md, int md_len,
                                       char *al, int al_len);
+                                      
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -25,6 +25,8 @@
 #include "dtgtk/gradientslider.h"
 #include <assert.h>
 
+G_BEGIN_DECLS
+
 #define DEVELOP_MASKS_VERSION (6)
 
 /**forms types */
@@ -638,6 +640,8 @@ int dt_masks_roundup(int num, int mult)
   const int rem = num % mult;
   return (rem == 0) ? num : num + mult - rem;
 }
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

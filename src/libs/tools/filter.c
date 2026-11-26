@@ -35,14 +35,6 @@ typedef struct dt_lib_tool_filter_t
   GtkWidget *reverse;
 } dt_lib_tool_filter_t;
 
-#ifdef USE_LUA
-typedef enum dt_collection_sort_order_t
-{
-  DT_COLLECTION_SORT_ORDER_ASCENDING = 0,
-  DT_COLLECTION_SORT_ORDER_DESCENDING
-} dt_collection_sort_order_t;
-#endif
-
 /* proxy function to intelligently reset filter */
 static void _lib_filter_reset(dt_lib_module_t *self, gboolean smart_filter);
 

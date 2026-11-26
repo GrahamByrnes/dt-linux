@@ -18,6 +18,7 @@
 
 #pragma once
 
+G_BEGIN_DECLS
 /** some common drawing routines. */
 
 #ifdef HAVE_CONFIG_H
@@ -536,6 +537,8 @@ static inline void dt_cairo_perceptual_gradient(cairo_pattern_t *grad, double al
   cairo_pattern_add_color_stop_rgba(grad, 0.0, 0.0, 0.0, 0.0, alpha);
   cairo_pattern_add_color_stop_rgba(grad, 1.0, 1.0, 1.0, 1.0, alpha);
 }
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

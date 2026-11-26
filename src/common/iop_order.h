@@ -124,6 +124,8 @@
 #include "config.h"
 #endif
 
+G_BEGIN_DECLS
+
 struct dt_iop_module_t;
 struct dt_develop_t;
 struct dt_dev_pixelpipe_t;
@@ -216,4 +218,6 @@ GList *dt_ioppr_iop_order_copy_deep(GList *iop_order_list);
 /** sort two modules by iop_order */
 gint dt_sort_iop_by_order(gconstpointer a, gconstpointer b);
 gint dt_sort_iop_list_by_order_f(gconstpointer a, gconstpointer b);
+
+G_END_DECLS
 #endif

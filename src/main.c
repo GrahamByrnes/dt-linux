@@ -49,14 +49,15 @@ int main(int argc, char *argv[])
     // For simple arguments do not redirect stdout
     if(!strcmp(argv[k], "--help") || !strcmp(argv[k], "-h") || !strcmp(argv[k], "/?") || !strcmp(argv[k], "--version"))
     {
-      redirect_output = FALSE;
+      redirect_output = TRUE;
       break;
     }
   }
 
   if(redirect_output)
   {
-    // something like C:\Users\username\AppData\Local\Microsoft\Windows\Temporary Internet Files\darktable\darktable-log.txt
+    // previously C:\Users\username\AppData\Local\Microsoft\Windows\Temporary Internet Files\darktable\darktable-log.txt
+    // currently C:\Users\username\AppData\Local\Microsoft\Windows\INetCache\darktable\darktable-log.txt
     char *logdir = g_build_filename(g_get_user_cache_dir(), "darktable", NULL);
     char *logfile = g_build_filename(logdir, "darktable-log.txt", NULL);
 
@@ -89,7 +90,7 @@ int main(int argc, char *argv[])
   g_setenv("GTK_CSD", "0", TRUE);
 #endif
 
-  if(dt_init(argc, argv, TRUE, TRUE, NULL)) exit(1);
+  if(dt_init(argc, argv, TRUE, TRUE)) exit(1);
   dt_gui_gtk_run(darktable.gui);
 
 #ifdef _WIN32

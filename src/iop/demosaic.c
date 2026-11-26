@@ -50,7 +50,7 @@ typedef enum dt_iop_demosaic_method_t
 {
   // methods for Bayer images
   DT_IOP_DEMOSAIC_PPG = 0,   // $DESCRIPTION: "PPG"
-  DT_IOP_DEMOSAIC_AMAZE = 1, // $DESCRIPTION: "AMaZE (slow)"
+  DT_IOP_DEMOSAIC_AMAZE = 1, // $DESCRIPTION: "not available"                                                            
   DT_IOP_DEMOSAIC_VNG4 = 2,  // $DESCRIPTION: "VNG4"
   DT_IOP_DEMOSAIC_RCD = 5,   // $DESCRIPTION: "RCD"
   DT_IOP_DEMOSAIC_PASSTHROUGH_MONOCHROME = 3, // $DESCRIPTION: "passthrough (monochrome) (experimental)"
@@ -110,11 +110,6 @@ typedef struct dt_iop_demosaic_data_t
   float median_thrs;
   double CAM_to_RGB[3][4];
 } dt_iop_demosaic_data_t;
-
-// Implemented on amaze_demosaic_RT.cc
-void amaze_demosaic_RT(dt_dev_pixelpipe_iop_t *piece, const float *const in, float *out,
-                       const dt_iop_roi_t *const roi_in, const dt_iop_roi_t *const roi_out,
-                       const uint32_t filters);
 
 const char *name()
 {
@@ -786,6 +781,7 @@ static void xtrans_markesteijn_interpolate(float *out, const float *const in,
       // camera matrix into account. Now use YPbPr which requires much
       // less code and is nearly indistinguishable. It assumes the
       // camera RGB is roughly linear.
+      const int max_ndir = 4;
       for(int d = 0; d < ndir; d++)
       {
         const int pad_yuv = (passes == 1) ? 8 : 13;
@@ -823,7 +819,8 @@ static void xtrans_markesteijn_interpolate(float *out, const float *const in,
       }
 
       // Build homogeneity maps from the derivatives:
-      memset(homo, 0, (size_t)ndir * TS * TS * sizeof(uint8_t));
+
+      memset(homo, 0, max_ndir * TS * TS * sizeof(uint8_t));
       const int pad_homo = (passes == 1) ? 10 : 15;
 
       for(int row = pad_homo; row < mrow - pad_homo; row++)
@@ -2886,12 +2883,10 @@ void process(struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const 
           dt_colorspaces_cygm_to_rgb(piece->pipe->dsc.processed_maximum, 1, data->CAM_to_RGB);
         }
       }
-      else if(demosaicing_method != (DT_IOP_DEMOSAIC_AMAZE || DT_IOP_DEMOSAIC_RCD))
+      else if(demosaicing_method != DT_IOP_DEMOSAIC_RCD)
         demosaic_ppg(tmp, in, &roo, &roi, piece->pipe->dsc.filters, data->median_thrs);
-      else if(demosaicing_method == DT_IOP_DEMOSAIC_RCD)
-        rcd_demosaic(piece, tmp, in, &roo, &roi, piece->pipe->dsc.filters);
       else
-        amaze_demosaic_RT(piece, in, tmp, &roi, &roo, piece->pipe->dsc.filters);
+        rcd_demosaic(piece, tmp, in, &roo, &roi, piece->pipe->dsc.filters);
 
       if(!(img->flags & DT_IMAGE_4BAYER) && data->green_eq != DT_IOP_GREEN_EQ_NO)
         dt_free_align(in);
@@ -2944,8 +2939,7 @@ void tiling_callback(struct dt_iop_module_t *self, struct dt_dev_pixelpipe_iop_t
 
   if((demosaicing_method == DT_IOP_DEMOSAIC_PPG) ||
       (demosaicing_method == DT_IOP_DEMOSAIC_PASSTHROUGH_MONOCHROME) ||
-      (demosaicing_method == DT_IOP_DEMOSAIC_PASSTHROUGH_COLOR) ||
-      (demosaicing_method == DT_IOP_DEMOSAIC_AMAZE))
+      (demosaicing_method == DT_IOP_DEMOSAIC_PASSTHROUGH_COLOR))
   {
     // Bayer pattern with PPG, Passthrough or Amaze
     tiling->factor = 1.0f + ioratio;         // in + out
@@ -3057,9 +3051,6 @@ void commit_params(struct dt_iop_module_t *self, dt_iop_params_t *params, dt_dev
     d->median_thrs = 0.0f;
   }
   
-  if(d->demosaicing_method == DT_IOP_DEMOSAIC_AMAZE)
-    d->median_thrs = 0.0f;
-
   // green-equilibrate over full image excludes tiling
   if(d->green_eq == DT_IOP_GREEN_EQ_FULL || d->green_eq == DT_IOP_GREEN_EQ_BOTH)
     piece->process_tiling_ready = 0;
@@ -3135,7 +3126,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_hide(g->greeneq);
   }
   
-  if(p->demosaicing_method == DT_IOP_DEMOSAIC_AMAZE || p->demosaicing_method == DT_IOP_DEMOSAIC_VNG4)
+  if(p->demosaicing_method == DT_IOP_DEMOSAIC_VNG4)
     gtk_widget_hide(g->median_thrs);
 
   dt_image_t *img = dt_image_cache_get(darktable.image_cache, self->dev->image_storage.id, 'w');

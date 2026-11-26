@@ -188,7 +188,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
   int vg; /* vertex with largest value */
 
   int i, j = 0, m, row;
-  int k;   /* track the number of function evaluations */
   int itr; /* track the number of iterations */
 
   double **v;    /* holds vertices of simplex */
@@ -256,7 +255,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
     f[j] = objfunc(v[j], rest);
   }
 
-  k = n + 1;
 
 #if 0
   /* print out the initial values */
@@ -328,7 +326,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
       constrain(vr, n);
     }
     fr = objfunc(vr, rest);
-    k++;
 
     if(fr < f[vh] && fr >= f[vs])
     {
@@ -352,7 +349,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
         constrain(ve, n);
       }
       fe = objfunc(ve, rest);
-      k++;
 
       /* by making fe < fr as opposed to fe < f[vs],
          Rosenbrocks function takes 63 iterations as opposed
@@ -392,7 +388,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
           constrain(vc, n);
         }
         fc = objfunc(vc, rest);
-        k++;
       }
       else
       {
@@ -407,10 +402,7 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
           constrain(vc, n);
         }
         fc = objfunc(vc, rest);
-        k++;
       }
-
-
       if(fc < f[vg])
       {
         for(j = 0; j <= n - 1; j++)
@@ -441,13 +433,11 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
           constrain(v[vg], n);
         }
         f[vg] = objfunc(v[vg], rest);
-        k++;
         if(constrain != NULL)
         {
           constrain(v[vh], n);
         }
         f[vh] = objfunc(v[vh], rest);
-        k++;
       }
     }
 
@@ -499,8 +489,6 @@ static int _simplex(double (*objfunc)(double[], void *[]), double start[], int n
   }
   double min = objfunc (v[vs], rest);
   printf ("Function value at minimum %f\n", min);
-  k++;
-  printf ("%d Function Evaluations\n", k);
   printf ("%d Iterations through program\n", itr);
 #endif
 

@@ -22,6 +22,8 @@
 #include <sqlite3.h>
 #include <stdint.h>
 
+G_BEGIN_DECLS
+
 typedef struct dt_tag_t
 {
   guint id;
@@ -202,6 +204,8 @@ void dt_tag_set_tag_order_by_id(const uint32_t tagid, const uint32_t sort,
 
 /** return the tagid of that tag - return 0 if not found*/
 const uint32_t dt_tag_get_tag_id_by_name(const char * const name);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -37,6 +37,7 @@ typedef struct dt_lib_tool_lighttable_t
   GtkWidget *zoom_entry;
   int current_zoom;
   gboolean combo_evt_reset;
+  dt_lighttable_layout_t current_layout;
 } dt_lib_tool_lighttable_t;
 
 // set zoom proxy function
@@ -47,8 +48,8 @@ static void _lib_lighttable_zoom_slider_changed(GtkRange *range, gpointer user_d
 // zoom entry change callback
 static gboolean _lib_lighttable_zoom_entry_changed(GtkWidget *entry, GdkEventKey *event,
                                                    dt_lib_module_t *self);
-
 static void _set_zoom(dt_lib_module_t *self, int zoom);
+static dt_lighttable_layout_t _lib_lighttable_get_layout(dt_lib_module_t *self);
 
 const char *name(dt_lib_module_t *self)
 {
@@ -100,16 +101,20 @@ void gui_init(dt_lib_module_t *self)
   gtk_entry_set_max_width_chars(GTK_ENTRY(d->zoom_entry), 3);
   dt_gui_key_accel_block_on_focus_connect(d->zoom_entry);
   gtk_box_pack_start(GTK_BOX(self->widget), d->zoom_entry, TRUE, TRUE, 0);
-
-  g_signal_connect(G_OBJECT(d->zoom), "value-changed", G_CALLBACK(_lib_lighttable_zoom_slider_changed),
-                   (gpointer)self);
-  g_signal_connect(d->zoom_entry, "key-press-event", G_CALLBACK(_lib_lighttable_zoom_entry_changed), self);
+  
+  g_signal_connect(G_OBJECT(d->zoom), "value-changed",
+                   G_CALLBACK(_lib_lighttable_zoom_slider_changed), (gpointer)self);
   gtk_range_set_value(GTK_RANGE(d->zoom), d->current_zoom);
-  _lib_lighttable_zoom_slider_changed(GTK_RANGE(d->zoom), self); // the slider defaults to 1 and GTK doesn't
-                                                                 // fire a value-changed signal when setting
-                                                                 // it to 1 => empty text box
+  _lib_lighttable_zoom_slider_changed(GTK_RANGE(d->zoom), self); 
+  g_signal_connect(d->zoom_entry, "key-press-event",
+                     G_CALLBACK(_lib_lighttable_zoom_entry_changed), self);
+                                          
+  if(d->current_layout)
+    g_signal_connect(G_OBJECT(d->current_layout), "value-changed",
+                     G_CALLBACK(_lib_lighttable_get_layout), (gpointer)self);
 
-  darktable.view_manager->proxy.lighttable.module = self;
+  darktable.view_manager->proxy.lighttable.module = self;  
+  darktable.view_manager->proxy.lighttable.get_layout = _lib_lighttable_get_layout; /********line added 7/4/26********/
   darktable.view_manager->proxy.lighttable.set_zoom = _lib_lighttable_set_zoom;
   darktable.view_manager->proxy.lighttable.get_zoom = _lib_lighttable_get_zoom;
 }
@@ -214,6 +219,13 @@ static gint _lib_lighttable_get_zoom(dt_lib_module_t *self)
 {
   dt_lib_tool_lighttable_t *d = (dt_lib_tool_lighttable_t *)self->data;
   return d->current_zoom;
+}
+
+/*** function added ****/
+static dt_lighttable_layout_t _lib_lighttable_get_layout(dt_lib_module_t *self)
+{
+  dt_lib_tool_lighttable_t *d = (dt_lib_tool_lighttable_t *)self->data;
+  return d->current_layout;
 }
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh

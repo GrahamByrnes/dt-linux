@@ -177,7 +177,6 @@ static void process_fastpath_apply_tonecurves(struct dt_iop_module_t *self, dt_d
   {
     if((d->lut[0][0] >= 0.0f) || (d->lut[1][0] >= 0.0f) || (d->lut[2][0] >= 0.0f))
     { // apply profile
-      //fprintf(stderr,"fastpath, ch=%d\n", ch);
       const size_t npixels = roi_out->width * roi_out->height;
       float *const out = (float *const)ovoid;
 #ifdef _OPENMP

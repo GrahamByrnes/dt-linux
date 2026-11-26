@@ -351,7 +351,7 @@ int write_image(dt_imageio_module_data_t *j2k_tmp, const char *filename, const v
     for(int i = 0; i < numcomps; i++)
     {
       cmptparm[i].prec = prec;
-      cmptparm[i].bpp = prec;
+      // cmptparm[i].bpp = prec;    /* specified as deprecated */
       cmptparm[i].sgnd = 0;
       cmptparm[i].dx = subsampling_dx;
       cmptparm[i].dy = subsampling_dy;
@@ -461,7 +461,8 @@ int write_image(dt_imageio_module_data_t *j2k_tmp, const char *filename, const v
   opj_destroy_codec(ccodec);
 
   /* add exif data blob. seems to not work for j2k files :( */
-  if(exif && j2k->format == JP2_CFMT) rc = dt_exif_write_blob(exif, exif_len, filename, 1);
+  if(exif && j2k->format == JP2_CFMT) 
+    rc = dt_exif_write_blob(exif, exif_len, filename, 1);
 
   /* free image data */
   opj_image_destroy(image);
@@ -470,7 +471,7 @@ int write_image(dt_imageio_module_data_t *j2k_tmp, const char *filename, const v
   g_free(parameters.cp_comment);
   free(parameters.cp_matrice);
 
-  return ((rc == 1) ? 0 : 1);
+  return rc;
 }
 
 size_t params_size(dt_imageio_module_format_t *self)

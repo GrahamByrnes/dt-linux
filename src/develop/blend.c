@@ -694,91 +694,91 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
   switch(channel & DT_DEV_PIXELPIPE_DISPLAY_ANY)
   {
     case DT_DEV_PIXELPIPE_DISPLAY_L:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(a[j]/100.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_L | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(b[j]/100.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_a:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f((a[j+1]+128.0f)/256.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_a | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f((b[j+1]+128.0f)/256.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_b:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f((a[j+2]+128.0f)/256.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_b | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f((b[j+2]+128.0f)/256.0f, 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_R:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(a[j], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_R | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(b[j], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_G:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(a[j+1], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_G | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(b[j+1], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_B:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(a[j+2], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_B | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c =clamp_range_f(b[j+2], 0.0f, 1.0f);
         for(int k = 0; k < bd->bch; k++) b[j + k] = c;
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_GRAY:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c = (work_profile == NULL)
                           ? clamp_range_f(0.3f * a[j] + 0.59f * a[j + 1] + 0.11f * a[j + 2], 0.0f, 1.0f)
@@ -787,7 +787,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_GRAY | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         const float c = (work_profile == NULL)
                           ? clamp_range_f(0.3f * a[j] + 0.59f * a[j + 1] + 0.11f * a[j + 2], 0.0f, 1.0f)
@@ -796,7 +796,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_LCH_C:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         float LCH[3];
         dt_Lab_2_LCH(a + j, LCH);
@@ -805,7 +805,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_LCH_C | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         float LCH[3];
         dt_Lab_2_LCH(b + j, LCH);
@@ -814,7 +814,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     case DT_DEV_PIXELPIPE_DISPLAY_LCH_h:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         float LCH[3];
         dt_Lab_2_LCH(a + j, LCH);
@@ -823,7 +823,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     case (DT_DEV_PIXELPIPE_DISPLAY_LCH_h | DT_DEV_PIXELPIPE_DISPLAY_OUTPUT):
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         float LCH[3];
         dt_Lab_2_LCH(b + j, LCH);
@@ -832,7 +832,7 @@ static void display_channel(const _blend_buffer_desc_t *bd, const float *a, floa
       }
       break;
     default:
-      for(size_t i = 0, j = 0; j < bd->stride; i++, j += bd->ch)
+      for(size_t j = 0; j < bd->stride; j += bd->ch)
       {
         for(int k = 0; k < bd->bch; k++) b[j + k] = 0.0f;
       }

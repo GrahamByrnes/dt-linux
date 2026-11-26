@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <inttypes.h>
 
+G_BEGIN_DECLS
+
 typedef struct dt_conf_t
 {
   dt_pthread_mutex_t mutex;
@@ -58,6 +60,8 @@ void dt_conf_cleanup(dt_conf_t *cf);
 int dt_conf_key_exists(const char *key);
 GSList *dt_conf_all_string_entries(const char *dir);
 void dt_conf_string_entry_free(gpointer data);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

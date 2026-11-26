@@ -692,13 +692,16 @@ int dt_control_key_released(guint key, guint state)
       break;
   }
 
-  if(handled) gtk_widget_queue_draw(dt_ui_center(darktable.gui->ui));
+  if(handled)
+    gtk_widget_queue_draw(dt_ui_center(darktable.gui->ui));
+
   return handled;
 }
 
 void dt_control_hinter_message(const struct dt_control_t *s, const char *message)
 {
-  if(s->proxy.hinter.module) return s->proxy.hinter.set_message(s->proxy.hinter.module, message);
+  if(s->proxy.hinter.module)
+    return s->proxy.hinter.set_message(s->proxy.hinter.module, message);
 }
 
 int32_t dt_control_get_mouse_over_id()

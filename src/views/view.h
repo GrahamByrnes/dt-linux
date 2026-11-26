@@ -56,6 +56,14 @@ typedef enum dt_view_flags_t
   VIEW_FLAGS_HIDDEN = 1 << 0,       // Hide the view from userinterface
 } dt_view_flags_t;
 
+typedef enum dt_lighttable_layout_t
+{
+  DT_LIGHTTABLE_LAYOUT_FIRST = -1,
+  DT_LIGHTTABLE_LAYOUT_ZOOMABLE = 0,
+  DT_LIGHTTABLE_LAYOUT_FILEMANAGER = 1,
+  DT_LIGHTTABLE_LAYOUT_LAST = 2
+} dt_lighttable_layout_t;
+
 typedef enum dt_darkroom_layout_t
 {
   DT_DARKROOM_LAYOUT_FIRST = -1,
@@ -109,6 +117,7 @@ typedef struct dt_view_t
   // scroll bar control
   float vscroll_size, vscroll_lower, vscroll_viewport_size, vscroll_pos;
   float hscroll_size, hscroll_lower, hscroll_viewport_size, hscroll_pos;
+  // seems to be the beginning of the portion which needs to be coordinated
   const char *(*name)(const struct dt_view_t *self); // get translatable name
   uint32_t (*view)(const struct dt_view_t *self); // get the view type
   uint32_t (*flags)();                            // get the view flags
@@ -136,10 +145,9 @@ typedef struct dt_view_t
   void (*scrolled)(struct dt_view_t *self, double x, double y, int up, int state); // mouse scrolled in view
   void (*scrollbar_changed)(struct dt_view_t *self, double x, double y); // scrollbar changed in view
 
-
   // list of mouse actions
   GSList *(*mouse_actions)(const struct dt_view_t *self);
-
+  
   GSList *accel_closures;
   struct dt_accel_dynamic_t *dynamic_accel_current;
 } dt_view_t;
@@ -183,7 +191,6 @@ typedef struct dt_view_manager_t
 {
   GList *views;
   dt_view_t *current_view;
-  // images currently active in the main view (there can be more than 1 in culling)
   GSList *active_images;
   dt_history_copy_item_t copy_paste;
 
@@ -267,6 +274,7 @@ typedef struct dt_view_manager_t
       struct dt_view_t *view;
       void (*set_zoom)(struct dt_lib_module_t *module, gint zoom);
       gint (*get_zoom)(struct dt_lib_module_t *module);
+      dt_lighttable_layout_t (*get_layout)(struct dt_lib_module_t *module);                                                  
       gboolean (*get_preview_state)(struct dt_view_t *view);
       void (*change_offset)(struct dt_view_t *view, gboolean reset, gint imgid);
     } lighttable;
@@ -330,7 +338,6 @@ void dt_view_manager_module_toolbox_add(dt_view_manager_t *vm, GtkWidget *tool, 
 /** set scrollbar positions, gui method. */
 void dt_view_set_scrollbar(dt_view_t *view, float hpos, float hscroll_lower, float hsize, float hwinsize,
                            float vpos, float vscroll_lower, float vsize, float vwinsize);
-
 /** update the collection module */
 void dt_view_collection_update(const dt_view_manager_t *vm);
 /** add mouse action record to list of mouse actions */
@@ -349,8 +356,11 @@ void dt_view_filter_reset(const dt_view_manager_t *vm, gboolean smart_filter);
 void dt_view_active_images_reset(gboolean raise);
 void dt_view_active_images_add(int imgid, gboolean raise);
 GSList *dt_view_active_images_get();
+/** get the lighttable current layout */
+dt_lighttable_layout_t dt_view_lighttable_get_layout(dt_view_manager_t *vm);
 /** get the darkroom current layout */
 dt_darkroom_layout_t dt_view_darkroom_get_layout(dt_view_manager_t *vm);
+
 /** sets the lighttable image in row zoom */
 void dt_view_lighttable_set_zoom(dt_view_manager_t *vm, gint zoom);
 /** gets the lighttable image in row zoom */

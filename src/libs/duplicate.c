@@ -382,7 +382,6 @@ static void _lib_duplicate_init_callback(gpointer instance, dt_lib_module_t *sel
   sqlite3_stmt *stmt;
   dt_develop_t *dev = darktable.develop;
 
-  int count = 0;
   // we get a summarize of all versions of the image
   DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db),
                               "SELECT i.version, i.id, m.value"
@@ -447,7 +446,6 @@ static void _lib_duplicate_init_callback(gpointer instance, dt_lib_module_t *sel
 
     gtk_box_pack_start(GTK_BOX(d->duplicate_box), hb, FALSE, FALSE, 0);
     d->thumbs = g_list_append(d->thumbs, thumb);
-    count++;
   }
 
   sqlite3_finalize (stmt);

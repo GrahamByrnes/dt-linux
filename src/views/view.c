@@ -127,8 +127,10 @@ static gint sort_views(gconstpointer a, gconstpointer b)
 
   for(int i = 0; i < n_view_order; i++)
   {
-    if(!strcmp(av->module_name, view_order[i])) apos = i;
-    if(!strcmp(bv->module_name, view_order[i])) bpos = i;
+    if(!strcmp(av->module_name, view_order[i]))
+      apos = i;
+    if(!strcmp(bv->module_name, view_order[i]))
+      bpos = i;
   }
 
   // order will be zero iff apos == bpos which can only happen when both views are not in view_order
@@ -260,14 +262,14 @@ void dt_vm_remove_child(GtkWidget *widget, gpointer data)
 //so remove the child before that
 static void _remove_child(GtkWidget *child,GtkContainer *container)
 {
-    if(DTGTK_IS_EXPANDER(child))
-    {
-      GtkWidget * evb = dtgtk_expander_get_body_event_box(DTGTK_EXPANDER(child));
-      gtk_container_remove(GTK_CONTAINER(evb),dtgtk_expander_get_body(DTGTK_EXPANDER(child)));
-      gtk_widget_destroy(child);
-    }
-    else
-      gtk_container_remove(container,child);
+  if(DTGTK_IS_EXPANDER(child))
+  {
+    GtkWidget * evb = dtgtk_expander_get_body_event_box(DTGTK_EXPANDER(child));
+    gtk_container_remove(GTK_CONTAINER(evb),dtgtk_expander_get_body(DTGTK_EXPANDER(child)));
+    gtk_widget_destroy(child);
+  }
+  else
+    gtk_container_remove(container,child);
 }
 
 int dt_view_manager_switch(dt_view_manager_t *vm, const char *view_name)
@@ -575,8 +577,8 @@ int dt_view_manager_button_released(dt_view_manager_t *vm, double x, double y, i
   return 0;
 }
 
-int dt_view_manager_button_pressed(dt_view_manager_t *vm, double x, double y, double pressure, int which,
-                                   int type, uint32_t state)
+int dt_view_manager_button_pressed(dt_view_manager_t *vm, double x, double y, double pressure,
+                                   int which, int type, uint32_t state)
 {
   if(!vm->current_view)
     return 0;
@@ -643,6 +645,7 @@ void dt_view_manager_scrolled(dt_view_manager_t *vm, double x, double y, int up,
 {
   if(!vm->current_view)
     return;
+
   if(vm->current_view->scrolled)
     vm->current_view->scrolled(vm->current_view, x, y, up, state);
 }
@@ -656,8 +659,8 @@ void dt_view_manager_scrollbar_changed(dt_view_manager_t *vm, double x, double y
     vm->current_view->scrollbar_changed(vm->current_view, x, y);
 }
 
-void dt_view_set_scrollbar(dt_view_t *view, float hpos, float hlower, float hsize, float hwinsize, float vpos,
-                           float vlower, float vsize, float vwinsize)
+void dt_view_set_scrollbar(dt_view_t *view, float hpos, float hlower, float hsize, float hwinsize,
+                           float vpos, float vlower, float vsize, float vwinsize)
 {
   if (view->vscroll_pos == vpos && view->vscroll_lower == vlower && view->vscroll_size == vsize &&
       view->vscroll_viewport_size == vwinsize && view->hscroll_pos == hpos && view->hscroll_lower == hlower &&
@@ -717,7 +720,6 @@ static void _images_to_act_on_insert_in_list(GList **list, const int imgid, gboo
     {
       sqlite3_stmt *stmt;
       gchar *query = g_strdup_printf(
-          NULL,
           "SELECT id"
           "  FROM main.images"
           "  WHERE group_id = %d AND id IN (%s)",
@@ -977,7 +979,8 @@ int dt_view_image_get_surface(int imgid, int width, int height, cairo_surface_t 
 
   dt_mipmap_cache_release(darktable.mipmap_cache, &buf);
 
-  if(rgbbuf) free(rgbbuf);
+  if(rgbbuf)
+    free(rgbbuf);
 
   return 0;
 }
@@ -1114,6 +1117,16 @@ dt_darkroom_layout_t dt_view_darkroom_get_layout(dt_view_manager_t *vm)
     return vm->proxy.darkroom.get_layout(vm->proxy.darkroom.view);
   else
     return DT_DARKROOM_LAYOUT_EDITING;
+}
+
+dt_lighttable_layout_t dt_view_lighttable_get_layout(dt_view_manager_t *vm)
+{
+  if(vm->proxy.lighttable.module)
+  {
+    return vm->proxy.lighttable.get_layout(vm->proxy.lighttable.module);
+  }
+  else
+    return DT_THUMBTABLE_MODE_FILEMANAGER;
 }
 
 void dt_view_lighttable_set_zoom(dt_view_manager_t *vm, gint zoom)

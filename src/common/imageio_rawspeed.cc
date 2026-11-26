@@ -26,7 +26,7 @@
 
 #define __STDC_LIMIT_MACROS
 
-extern "C" {
+//extern "C" {
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/exif.h"
@@ -35,7 +35,7 @@ extern "C" {
 #include "imageio.h"
 #include "common/tags.h"
 #include <stdint.h>
-}
+//}
 
 // define this function, it is only declared in rawspeed:
 int rawspeed_get_number_of_processor_cores()

@@ -25,6 +25,8 @@
 #include <gtk/gtk.h>
 #include <inttypes.h>
 
+G_BEGIN_DECLS
+
 /** Flag for the format modules */
 typedef enum dt_imageio_format_flags_t
 {
@@ -71,7 +73,6 @@ typedef struct dt_imageio_module_format_t
 
   // data for you to initialize
   void *gui_data;
-  luaA_Type parameter_lua_type;
 
   gboolean ready;
 } dt_imageio_module_format_t;
@@ -93,7 +94,6 @@ typedef struct dt_imageio_module_storage_t
   // data for you to initialize
   void *gui_data;
 
-  luaA_Type parameter_lua_type;
 } dt_imageio_module_storage_t;
 
 
@@ -136,6 +136,9 @@ void dt_imageio_remove_storage(dt_imageio_module_storage_t *storage);
 // and improve the readability of the displayed string itself in the "scale" field
 // of the settings export.
 gchar *dt_imageio_resizing_factor_get_and_parsing(double *num, double *denum);
+
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

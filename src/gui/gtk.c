@@ -199,13 +199,16 @@ static gboolean toggle_tooltip_visibility(GtkAccelGroup *accel_group, GObject *a
  
 static gchar *_panels_get_view_path(char *suffix)
 {
-  if(!darktable.view_manager) return NULL;
+  if(!darktable.view_manager)
+    return NULL;
 
   const dt_view_t *cv = dt_view_manager_get_current_view(darktable.view_manager);
   // in lighttable, we store panels states per layout
   char lay[32] = "";
   if(g_strcmp0(cv->module_name, "lighttable") == 0)
+  {
     g_snprintf(lay, sizeof(lay), "1/");
+  }                                                                                        
   else if(g_strcmp0(cv->module_name, "darkroom") == 0)
     g_snprintf(lay, sizeof(lay), "%d/", dt_view_darkroom_get_layout(darktable.view_manager));
 
@@ -378,7 +381,7 @@ gboolean dt_gui_ignore_scroll(GdkEventScroll *event)
 {
   const gboolean ignore_without_mods = dt_conf_get_bool("darkroom/ui/sidebar_scroll_default");
   const GdkModifierType mods_pressed = (event->state & gtk_accelerator_get_default_mod_mask());
-
+  
   if(mods_pressed == 0)
     return ignore_without_mods;
   else
@@ -389,7 +392,6 @@ gboolean dt_gui_ignore_scroll(GdkEventScroll *event)
 
       event->state &= ~darktable.gui->sidebar_scroll_mask;
     }
-
     return FALSE;
   }
 }
@@ -436,13 +438,18 @@ gboolean dt_gui_get_scroll_deltas(const GdkEventScroll *event, gdouble *delta_x,
     case GDK_SCROLL_SMOOTH:
       if((delta_x && event->delta_x != 0) || (delta_y && event->delta_y != 0))
       {
-        if(delta_x) *delta_x = event->delta_x;
-        if(delta_y) *delta_y = event->delta_y;
+        if(delta_x)
+          *delta_x = event->delta_x;
+        if(delta_y)
+          *delta_y = event->delta_y;
+      
         handled = TRUE;
       }
+      break;
     default:
       break;
     }
+    
   return handled;
 }
 
@@ -474,7 +481,9 @@ gboolean dt_gui_get_scroll_unit_deltas(const GdkEventScroll *event, int *delta_x
     case GDK_SCROLL_UP:
       if(delta_y)
       {
-        if(delta_x) *delta_x = 0;
+        if(delta_x)
+          *delta_x = 0;
+      
         *delta_y = -1;
         handled = TRUE;
       }
@@ -482,7 +491,9 @@ gboolean dt_gui_get_scroll_unit_deltas(const GdkEventScroll *event, int *delta_x
     case GDK_SCROLL_DOWN:
       if(delta_y)
       {
-        if(delta_x) *delta_x = 0;
+        if(delta_x) 
+          *delta_x = 0;
+      
         *delta_y = 1;
         handled = TRUE;
       }
@@ -490,11 +501,13 @@ gboolean dt_gui_get_scroll_unit_deltas(const GdkEventScroll *event, int *delta_x
     // is trackpad (or touch) scroll
     case GDK_SCROLL_SMOOTH:
       // stop events reset accumulated delta
+
       if(event->is_stop)
       {
         acc_x = acc_y = 0.0;
         break;
       }
+
       // accumulate trackpad/touch scrolls until they make a unit
       // scroll, and only then tell caller that there is a scroll to
       // handle
@@ -519,6 +532,7 @@ gboolean dt_gui_get_scroll_unit_deltas(const GdkEventScroll *event, int *delta_x
     default:
       break;
   }
+
   return handled;
 }
 
@@ -531,7 +545,6 @@ gboolean dt_gui_get_scroll_delta(const GdkEventScroll *event, gdouble *delta)
     *delta = delta_x + delta_y;
     return TRUE;
   }
-
   return FALSE;
 }
 
@@ -692,8 +705,7 @@ static gboolean scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user
   if(dt_gui_get_scroll_unit_delta(event, &delta_y))
   {
     dt_view_manager_scrolled(darktable.view_manager, event->x, event->y,
-                             delta_y < 0,
-                             event->state & 0xf);
+                             delta_y < 0, event->state & 0xf);
     gtk_widget_queue_draw(widget);
   }
 
@@ -708,17 +720,17 @@ static gboolean borders_scrolled(GtkWidget *widget, GdkEventScroll *event, gpoin
   return TRUE;
 }
 
-static gboolean scrollbar_changed(GtkWidget *widget, gpointer user_data)
+static gboolean _scrollbar_changed(GtkWidget *widget, gpointer user_data)
 {
   gdouble value_x, value_y;
 
   GtkAdjustment *adjustment_x = gtk_range_get_adjustment(GTK_RANGE(darktable.gui->scrollbars.hscrollbar));
   GtkAdjustment *adjustment_y = gtk_range_get_adjustment(GTK_RANGE(darktable.gui->scrollbars.vscrollbar));
-  value_x = gtk_adjustment_get_value (adjustment_x);
-  value_y = gtk_adjustment_get_value (adjustment_y);
-
+  value_x = gtk_adjustment_get_value(adjustment_x);
+  value_y = gtk_adjustment_get_value(adjustment_y);
+  
+  dt_thumbtable_scrollbar_changed(dt_ui_thumbtable(darktable.gui->ui), value_x, value_y);
   dt_view_manager_scrollbar_changed(darktable.view_manager, value_x, value_y);
-
   return TRUE;
 }
 
@@ -850,7 +862,9 @@ static gboolean _gui_switch_view_key_accel_callback(GtkAccelGroup *accel_group, 
       break;
   }
   /* try switch to mode */
-  if(*mode) dt_ctl_switch_mode_to(mode);
+  if(*mode)
+    dt_ctl_switch_mode_to(mode);
+
   return TRUE;
 }
 
@@ -929,8 +943,8 @@ static gboolean window_configure(GtkWidget *da, GdkEvent *event, gpointer user_d
 
   if(oldx != event->configure.x || oldy != event->configure.y)
   {
-    dt_colorspaces_set_display_profile(
-        DT_COLORSPACE_DISPLAY); // maybe we are on another screen now with > 50% of the area
+    dt_colorspaces_set_display_profile(DT_COLORSPACE_DISPLAY); 
+    // maybe we are on another screen now with > 50% of the area
     oldx = event->configure.x;
     oldy = event->configure.y;
   }
@@ -1142,12 +1156,12 @@ int dt_gui_gtk_init(dt_gui_gtk_t *gui)
   // TODO: left, right, top, bottom:
   // leave-notify-event
   widget = darktable.gui->scrollbars.vscrollbar;
-  g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(scrollbar_changed), NULL);
+  g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(_scrollbar_changed), NULL);
   g_signal_connect(G_OBJECT(widget), "button-press-event", G_CALLBACK(scrollbar_press_event), NULL);
   g_signal_connect(G_OBJECT(widget), "button-release-event", G_CALLBACK(scrollbar_release_event), NULL);
 
   widget = darktable.gui->scrollbars.hscrollbar;
-  g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(scrollbar_changed), NULL);
+  g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(_scrollbar_changed), NULL);
   g_signal_connect(G_OBJECT(widget), "button-press-event", G_CALLBACK(scrollbar_press_event), NULL);
   g_signal_connect(G_OBJECT(widget), "button-release-event", G_CALLBACK(scrollbar_release_event), NULL);
 
@@ -1516,7 +1530,6 @@ static void init_main_table(GtkWidget *container)
 
   /* initiialize the thumb panel */
   darktable.gui->ui->thumbtable = dt_thumbtable_new();
-
   /* the log message */
   GtkWidget *eb = gtk_event_box_new();
   darktable.gui->ui->log_msg = gtk_label_new("");
@@ -1755,7 +1768,8 @@ void dt_ui_restore_panels(dt_ui_t *ui)
 
 void dt_ui_update_scrollbars(dt_ui_t *ui)
 {
-  if (!darktable.gui->scrollbars.visible) return;
+  if (!darktable.gui->scrollbars.visible)
+    return;
 
   /* update scrollbars for current view */
   const dt_view_t *cv = dt_view_manager_get_current_view(darktable.view_manager);
@@ -1779,7 +1793,7 @@ void dt_ui_update_scrollbars(dt_ui_t *ui)
 void dt_ui_scrollbars_show(dt_ui_t *ui, gboolean show)
 {
   darktable.gui->scrollbars.visible = show;
-
+  
   if (show)
     dt_ui_update_scrollbars(ui);
   else
@@ -1963,8 +1977,12 @@ static GtkWidget *_ui_init_panel_container_top(GtkWidget *container)
 static gboolean _ui_init_panel_container_center_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
   // just make sure nothing happens unless ctrl-alt are pressed:
+  gboolean ret = (((event->state & gtk_accelerator_get_default_mod_mask()) != darktable.gui->sidebar_scroll_mask)
+                   != dt_conf_get_bool("darkroom/ui/sidebar_scroll_default"));
+  
   return (((event->state & gtk_accelerator_get_default_mod_mask()) != darktable.gui->sidebar_scroll_mask)
           != dt_conf_get_bool("darkroom/ui/sidebar_scroll_default"));
+  return ret;
 }
 
 // this should work as long as everything happens in the gui thread
@@ -2016,7 +2034,7 @@ static GtkWidget *_ui_init_panel_container_center(GtkWidget *container, gboolean
   gtk_viewport_set_shadow_type(GTK_VIEWPORT(widget), GTK_SHADOW_NONE);
   gtk_container_add(GTK_CONTAINER(container), widget);
 
-  /* avoid scrolling with wheel, it's distracting (you'll end up over a control, and scroll it's value) */
+  /* avoid scrolling with wheel, it's distracting (you'll end up over a control, and scroll its value) */
   container = widget;
   widget = gtk_event_box_new();
   gtk_widget_add_events(GTK_WIDGET(widget), GDK_SCROLL_MASK);
@@ -2619,10 +2637,7 @@ void dt_gui_load_theme(const char *theme)
   }
 
   if(!gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(themes_style_provider), themecss, -1, &error))
-  {
-    fprintf(stderr, "%s: error parsing combined CSS: %s\n", G_STRFUNC, error->message);
     g_clear_error(&error);
-  }
 
   g_free(themecss);
   g_object_unref(themes_style_provider);

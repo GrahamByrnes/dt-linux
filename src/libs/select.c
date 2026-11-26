@@ -26,10 +26,6 @@
 #include "gui/gtk.h"
 #include "libs/lib.h"
 #include <gdk/gdkkeysyms.h>
-#ifdef USE_LUA
-#include "lua/call.h"
-#include "lua/image.h"
-#endif
 #include "libs/lib_api.h"
 
 DT_MODULE(1)

@@ -2173,16 +2173,6 @@ void dt_dev_module_remove(dt_develop_t *dev, dt_iop_module_t *module)
 
 void _dev_module_update_multishow(dt_develop_t *dev, struct dt_iop_module_t *module)
 {
-  // We count the number of other instances
-  int nb_instances = 0;
-  for(GList *modules = dev->iop; modules; modules = g_list_next(modules))
-  {
-    dt_iop_module_t *mod = (dt_iop_module_t *)modules->data;
-
-    if(mod->instance == module->instance)
-      nb_instances++;
-  }
-
   module->multi_show_up = 0;
   module->multi_show_down = 0;
 }

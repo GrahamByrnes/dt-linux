@@ -66,7 +66,7 @@ add_iop(rawprepare "rawprepare.c")
 add_iop(temperature "temperature.c" DEFAULT_VISIBLE)
 add_iop(highlights "highlights.c")
 add_iop(hotpixels "hotpixels.c")
-add_iop(demosaic "demosaic.c" "amaze_demosaic_RT.cc")
+add_iop(demosaic "demosaic.c")
 add_iop(rotatepixels "rotatepixels.c")
 add_iop(scalepixels "scalepixels.c")
 add_iop(hazeremoval "hazeremoval.c" DEFAULT_VISIBLE)
@@ -93,7 +93,7 @@ add_iop(gamma "gamma.c")
 #add_iop(mlens "mlens.c")
 
 if(LensFun_FOUND)
-  add_iop(lens "lens.cc")
+#  add_iop(lens "lens.c")
 endif(LensFun_FOUND)
 
 # fix for Mac when OpenMP is only available in C compiler

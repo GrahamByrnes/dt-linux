@@ -22,6 +22,8 @@
 #include <string.h>
 #include <librsvg/rsvg.h>
 
+G_BEGIN_DECLS
+
 /** dynamically allocate and concatenate string */
 gchar *dt_util_dstrcat(gchar *str, const gchar *format, ...) __attribute__((format(printf, 2, 3)));
 
@@ -62,6 +64,8 @@ gchar *dt_util_normalize_path(const gchar *input);
 // format exposure time string
 gchar *dt_util_format_exposure(const float exposuretime);
 char *dt_read_file(const char *const filename, size_t *filesize);
+
+G_END_DECLS
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -45,8 +45,8 @@ bool PefDecoder::isAppropriateDecoder(const TiffRootIFD* rootIFD,
 
   // FIXME: magic
 
-  return make == "PENTAX Corporation" ||
-         make == "RICOH IMAGING COMPANY, LTD." || make == "PENTAX";
+  return make == "PENTAX Corporation" 
+         || make == "RICOH IMAGING COMPANY, LTD." || make == "PENTAX";
 }
 
 RawImage PefDecoder::decodeRawInternal() {

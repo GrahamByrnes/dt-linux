@@ -61,17 +61,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifndef G_SOURCE_FUNC // Defined for glib >= 2.58
-#define G_SOURCE_FUNC(f) ((GSourceFunc) (void (*)(void)) (f))
-#endif
-
 DT_MODULE(1)
 
 static void _update_softproof_gamut_checking(dt_develop_t *d);
 /* signal handler for filmstrip image switching */
 static void _view_darkroom_filmstrip_activate_callback(gpointer instance, int imgid, gpointer user_data);
 
-static void dt_dev_change_image(dt_develop_t *dev, const int32_t imgid);
+static void _dev_change_image(dt_develop_t *dev, const int32_t imgid);
 
 static void _darkroom_display_second_window(dt_develop_t *dev);
 
@@ -367,15 +363,15 @@ void expose(dt_view_t *self, cairo_t *cri, int32_t width, int32_t height,int32_t
     cairo_set_source_surface(cri, image_surface, 0, 0);
     cairo_paint(cri);
   }
-  /* if we are in full preview mode, we don"t want anything else than the image */
+  // if we are in full preview mode, we don"t want anything else than the image 
   if(dev->full_preview)
     return;
-  /* check if we should create a snapshot of view */
+  // check if we should create a snapshot of view
   if(darktable.develop->proxy.snapshot.request && !darktable.develop->image_loading)
   {
-    /* reset the request */
+    // reset the request 
     darktable.develop->proxy.snapshot.request = FALSE;
-    /* validation of snapshot filename */
+    // validation of snapshot filename 
     g_assert(darktable.develop->proxy.snapshot.filename != NULL);
     // Store current image surface to snapshot file.
     //  FIXME: add checks so that we don't make snapshots of preview pipe image surface.
@@ -471,11 +467,9 @@ void expose(dt_view_t *self, cairo_t *cri, int32_t width, int32_t height,int32_t
 
     cairo_restore(cri);
   }
-
   // display mask if we have a current module activated or if the masks manager module is expanded
-  const gboolean display_masks =
-    (dev->gui_module && dev->gui_module->enabled)
-    || dt_lib_gui_get_expanded(dt_lib_get_module("masks"));
+  const gboolean display_masks = (dev->gui_module && dev->gui_module->enabled)
+                                  || dt_lib_gui_get_expanded(dt_lib_get_module("masks"));
   // execute module callback hook.
   if(dev->gui_module && dev->gui_module->request_color_pick != DT_REQUEST_COLORPICK_OFF && display_masks)
   {
@@ -625,7 +619,7 @@ static void dt_dev_cleanup_module_accels(dt_iop_module_t *module)
   dt_accel_cleanup_locals_iop(module);
 }
 
-static void dt_dev_change_image(dt_develop_t *dev, const int32_t imgid)
+static void _dev_change_image(dt_develop_t *dev, const int32_t imgid)
 {
   // stop crazy users from sleeping on key-repeat spacebar:
   if(dev->image_loading)
@@ -859,7 +853,7 @@ static void _view_darkroom_filmstrip_activate_callback(gpointer instance, int32_
     // switch images in darkroom mode:
     const dt_view_t *self = (dt_view_t *)user_data;
     dt_develop_t *dev = (dt_develop_t *)self->data;
-    dt_dev_change_image(dev, imgid);
+    _dev_change_image(dev, imgid);
     // move filmstrip
     dt_thumbtable_set_offset_image(dt_ui_thumbtable(darktable.gui->ui), imgid, TRUE);
     // force redraw
@@ -1306,7 +1300,8 @@ static gboolean _gamut_quickbutton_pressed(GtkWidget *widget, GdkEvent *event, g
   }
 }
 
-/* set the gui state for both softproof and gamut checking */
+// set the gui state for both softproof and gamut checking
+/*****************************************/
 static void _update_softproof_gamut_checking(dt_develop_t *d)
 {
   g_signal_handlers_block_by_func(d->profile.softproof_button, _softproof_quickbutton_clicked, d);
@@ -1706,8 +1701,7 @@ void gui_init(dt_view_t *self)
     dt_bauhaus_combobox_add(colorscheme, C_("solidcolor", "blue"));
     dt_bauhaus_combobox_add(colorscheme, C_("solidcolor", "black"));
     dt_bauhaus_combobox_set(colorscheme, dev->rawoverexposed.colorscheme);
-    gtk_widget_set_tooltip_text(
-        colorscheme,
+    gtk_widget_set_tooltip_text(colorscheme,
         _("select the solid color to indicate over exposure.\nwill only be used if mode = mark with solid color"));
     g_signal_connect(G_OBJECT(colorscheme), "value-changed", G_CALLBACK(rawoverexposed_colorscheme_callback), dev);
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(colorscheme), TRUE, TRUE, 0);

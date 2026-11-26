@@ -1,0 +1,7 @@
+  <dtconfig prefs="lighttable">
+    <name>lighttable/ui/fractional_scrolling</name>
+    <type>bool</type>
+    <default>false</default>
+    <shortdescription>allows fractional scrolling on touchpads</shortdescription>
+    <longdescription>allows fractional, cumulative scrolling using a notebook</longdescription>
+  </dtconfig>

@@ -144,7 +144,7 @@ int dt_imageio_large_thumbnail(const char *filename, uint8_t **buffer, int32_t *
       }
     }
 
-    // fprintf(stderr, "[dt_imageio_large_thumbnail GM] successfully decoded thumbnail\n");
+    fprintf(stderr, "[dt_imageio_large_thumbnail GM] successfully decoded thumbnail\n");
     res = 0;
 
   error_gm:
@@ -734,7 +734,6 @@ int dt_imageio_export_with_flags(const int32_t imgid, const char *filename,
   }
   else
     sRGB = 0;
-
   // get only once at the beginning, in case the user changes it on the way:
   const gboolean high_quality_processing
       = ((format_params->max_width == 0 || format_params->max_width >= pipe.processed_width)

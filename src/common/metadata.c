@@ -49,7 +49,8 @@ static const struct
   {"Xmp.dc.description", N_("description"), DT_METADATA_TYPE_USER, 1},
   {"Xmp.dc.rights", N_("rights"), DT_METADATA_TYPE_USER, 4},
   {"Xmp.acdsee.notes", N_("notes"), DT_METADATA_TYPE_USER, 5},
-  {"Xmp.darktable.version_name", N_("version name"), DT_METADATA_TYPE_OPTIONAL, 6}
+  {"Xmp.darktable.version_name", N_("version name"), DT_METADATA_TYPE_OPTIONAL, 6},
+  {"Xmp.darktable.number", N_("number"), DT_METADATA_TYPE_OPTIONAL, 7}
   // clang-format on
 };
 
@@ -588,6 +589,13 @@ void dt_metadata_set(const int imgid, const char *key, const char *value, const 
       }
     }
   }
+}
+
+void dt_metadata_set_import_lock(const int imgid, const char *key, const char *value)
+{
+  dt_pthread_mutex_lock(&darktable.metadata_threadsafe);
+  dt_metadata_set_import(imgid, key, value);
+  dt_pthread_mutex_unlock(&darktable.metadata_threadsafe);
 }
 
 void dt_metadata_set_import(const int imgid, const char *key, const char *value)
